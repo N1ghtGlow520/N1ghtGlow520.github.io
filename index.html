@@ -16,10 +16,29 @@
             --purple-light: #a78bfa;
             --purple-dark: #5b21b6;
             --purple-glow: rgba(124, 58, 237, 0.3);
+            --purple-subtle: rgba(124, 58, 237, 0.05);
             --white: #ffffff;
-            --gray-light: #f8f7ff;
-            --gray-text: #6b7280;
-            --border-color: rgba(124, 58, 237, 0.2);
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-600: #525252;
+            --gray-800: #262626;
+            --gray-900: #171717;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --white: #0a0a0a;
+            --gray-50: #171717;
+            --gray-100: #262626;
+            --gray-200: #404040;
+            --gray-600: #a3a3a3;
+            --gray-800: #e5e5e5;
+            --gray-900: #fafafa;
+            --purple-primary: #a78bfa;
+            --purple-light: #c4b5fd;
+            --purple-glow: rgba(167, 139, 250, 0.4);
+            --purple-subtle: rgba(167, 139, 250, 0.08);
         }
 
         html {
@@ -29,12 +48,32 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--white);
-            color: #1f2937;
+            color: var(--gray-900);
             overflow-x: hidden;
             line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
         }
 
-        /* ===== 导航栏 ===== */
+        /* 页面加载进度条 */
+        .loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
+            z-index: 9999;
+            transition: width 0.3s;
+            animation: loadProgress 1.5s ease-out forwards;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0; }
+            50% { width: 70%; }
+            100% { width: 100%; opacity: 0; }
+        }
+
+        /* 导航栏 */
         nav {
             position: fixed;
             top: 0;
@@ -44,79 +83,81 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.85);
-            border-bottom: 1px solid var(--border-color);
-            animation: slideDown 0.8s ease-out;
+            transition: var(--transition);
         }
 
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        nav.scrolled {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.1);
+            padding: 16px 60px;
+        }
+
+        [data-theme="dark"] nav.scrolled {
+            background: rgba(10, 10, 10, 0.85);
         }
 
         .nav-logo {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--purple-primary);
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             letter-spacing: 2px;
-            position: relative;
-        }
-
-        .nav-logo::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--purple-primary), transparent);
-            animation: lineExpand 2s ease-out forwards;
-        }
-
-        @keyframes lineExpand {
-            from { width: 0; }
-            to { width: 100%; }
         }
 
         .nav-links {
             display: flex;
-            gap: 36px;
+            gap: 40px;
             list-style: none;
+            position: relative;
         }
 
         .nav-links a {
             text-decoration: none;
-            color: #4b5563;
+            color: var(--gray-600);
             font-size: 0.9rem;
             font-weight: 500;
             position: relative;
-            transition: color 0.3s;
-            letter-spacing: 1px;
+            transition: var(--transition);
+            padding: 8px 0;
         }
 
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background: var(--purple-primary);
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--purple-primary);
         }
 
-        .nav-links a:hover::after {
-            width: 100%;
+        .nav-indicator {
+            position: absolute;
+            bottom: 0;
+            height: 2px;
+            background: var(--purple-primary);
+            transition: var(--transition);
+            border-radius: 2px;
         }
 
-        /* ===== Hero 区域 ===== */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--purple-primary);
+            transform: rotate(180deg);
+        }
+
+        /* Hero 区域 */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -129,206 +170,137 @@
             overflow: hidden;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.03) 0%, transparent 70%);
-            animation: rotateGradient 20s linear infinite;
-        }
-
-        @keyframes rotateGradient {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .hero-badge {
-            display: inline-block;
-            padding: 8px 20px;
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            font-size: 0.8rem;
-            color: var(--purple-primary);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            animation: fadeInUp 1s ease-out 0.3s both;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-badge::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .hero-title {
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 800;
-            color: #1f2937;
-            margin-bottom: 20px;
-            animation: fadeInUp 1s ease-out 0.5s both;
-            position: relative;
-        }
-
-        .hero-title span {
-            background: linear-gradient(135deg, var(--purple-primary), var(--purple-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: var(--gray-text);
-            max-width: 600px;
-            margin-bottom: 40px;
-            animation: fadeInUp 1s ease-out 0.7s both;
-        }
-
-        .hero-line {
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
-            border-radius: 3px;
-            margin-bottom: 40px;
-            animation: fadeInUp 1s ease-out 0.9s both, pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scaleX(1); }
-            50% { opacity: 0.7; transform: scaleX(1.2); }
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 16px;
-            animation: fadeInUp 1s ease-out 1.1s both;
-        }
-
-        .btn {
-            padding: 14px 32px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: var(--purple-primary);
-            color: white;
-            border: 2px solid var(--purple-primary);
-            box-shadow: 0 4px 20px var(--purple-glow);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--purple-primary);
-            border: 2px solid var(--border-color);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--purple-primary);
-            background: rgba(124, 58, 237, 0.05);
-            transform: translateY(-3px);
-        }
-
-        /* 浮动装饰元素 */
-        .floating-shapes {
+        .hero-bg {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
             pointer-events: none;
-            overflow: hidden;
         }
 
-        .shape {
+        .hero-glow {
             position: absolute;
-            border: 1px solid var(--border-color);
+            width: 600px;
+            height: 600px;
             border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            background: radial-gradient(circle, var(--purple-subtle), transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: breathe 8s ease-in-out infinite;
         }
 
-        .shape:nth-child(1) {
-            width: 80px; height: 80px;
-            top: 20%; left: 10%;
-            animation-delay: 0s;
-            animation-duration: 7s;
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.8; }
         }
 
-        .shape:nth-child(2) {
-            width: 40px; height: 40px;
-            top: 60%; right: 15%;
-            animation-delay: 1s;
-            animation-duration: 5s;
+        .hero-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--purple-subtle) 1px, transparent 1px),
+                linear-gradient(90deg, var(--purple-subtle) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            animation: gridMove 20s linear infinite;
         }
 
-        .shape:nth-child(3) {
-            width: 120px; height: 120px;
-            bottom: 20%; left: 20%;
-            animation-delay: 2s;
-            animation-duration: 8s;
-            border-radius: 30%;
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
         }
 
-        .shape:nth-child(4) {
-            width: 60px; height: 60px;
-            top: 30%; right: 10%;
-            animation-delay: 0.5s;
-            animation-duration: 6s;
+        .hero-content {
+            position: relative;
+            z-index: 1;
         }
 
-        .shape:nth-child(5) {
-            width: 30px; height: 30px;
-            bottom: 30%; right: 30%;
-            animation-delay: 1.5s;
-            animation-duration: 4s;
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-light), var(--purple-primary));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite, typing 2s steps(3) forwards;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid var(--purple-primary);
+            width: 0;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
-            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
-        /* ===== 通用 Section ===== */
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease 2s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            animation: fadeIn 1s ease 2.5s forwards;
+        }
+
+        .scroll-hint span {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            letter-spacing: 2px;
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid var(--purple-primary);
+            border-bottom: 2px solid var(--purple-primary);
+            transform: rotate(45deg);
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 1; }
+            50% { transform: rotate(45deg) translate(5px, 5px); opacity: 0.5; }
+        }
+
+        /* 通用 Section */
         section {
             padding: 100px 60px;
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 70px;
+            margin-bottom: 80px;
+            position: relative;
         }
 
         .section-tag {
@@ -344,184 +316,146 @@
         .section-title {
             font-size: 2.5rem;
             font-weight: 700;
-            color: #1f2937;
             margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .section-line {
-            width: 40px;
+            width: 60px;
             height: 3px;
-            background: var(--purple-primary);
+            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
             margin: 0 auto;
             border-radius: 3px;
-        }
-
-        /* ===== 关于我 ===== */
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-
-        .about-visual {
-            position: relative;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .about-card {
-            width: 300px;
-            height: 380px;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.02), rgba(167, 139, 250, 0.05));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             position: relative;
             overflow: hidden;
-            animation: cardFloat 4s ease-in-out infinite;
         }
 
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .about-card::before {
+        .section-line::after {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, var(--purple-primary), transparent, var(--purple-light), transparent);
-            border-radius: 22px;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.5s;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            animation: shimmer 2s infinite;
         }
 
-        .about-card:hover::before {
-            opacity: 1;
-            animation: borderRotate 3s linear infinite;
+        @keyframes shimmer {
+            to { left: 100%; }
         }
 
-        @keyframes borderRotate {
-            from { filter: hue-rotate(0deg); }
-            to { filter: hue-rotate(360deg); }
+        /* 装饰线条 */
+        .corner-decoration {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--purple-primary);
+            opacity: 0.3;
         }
 
-        .avatar-placeholder {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid var(--border-color);
+        .corner-tl {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-tr {
+            top: 0;
+            right: 0;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl {
+            bottom: 0;
+            left: 0;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* 筛选标签 */
+        .filter-tabs {
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(167, 139, 250, 0.1));
-            animation: avatarPulse 3s ease-in-out infinite;
-        }
-
-        @keyframes avatarPulse {
-            0%, 100% { box-shadow: 0 0 0 0 var(--purple-glow); }
-            50% { box-shadow: 0 0 0 15px rgba(124, 58, 237, 0); }
-        }
-
-        .about-card-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
-
-        .about-card-role {
-            font-size: 0.85rem;
-            color: var(--purple-primary);
-            letter-spacing: 1px;
-        }
-
-        .about-stats {
-            display: flex;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--purple-primary);
-        }
-
-        .stat-label {
-            font-size: 0.7rem;
-            color: var(--gray-text);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .about-content h3 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #1f2937;
-        }
-
-        .about-content p {
-            color: var(--gray-text);
-            margin-bottom: 16px;
-            font-size: 1rem;
-            line-height: 1.8;
-        }
-
-        .about-tags {
-            display: flex;
+            gap: 16px;
+            margin-bottom: 50px;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 24px;
         }
 
-        .about-tag {
-            padding: 6px 16px;
-            border: 1px solid var(--border-color);
+        .filter-tab {
+            padding: 10px 24px;
+            border: 1px solid var(--gray-200);
             border-radius: 50px;
-            font-size: 0.8rem;
-            color: var(--purple-primary);
-            transition: all 0.3s;
+            background: var(--white);
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
 
-        .about-tag:hover {
+        .filter-tab::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
             background: var(--purple-primary);
-            color: white;
-            border-color: var(--purple-primary);
-            transform: translateY(-2px);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
         }
 
-        /* ===== 项目展示 ===== */
+        .filter-tab:hover::before,
+        .filter-tab.active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .filter-tab span {
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s;
+        }
+
+        .filter-tab:hover span,
+        .filter-tab.active span {
+            color: white;
+        }
+
+        .filter-tab.active {
+            border-color: var(--purple-primary);
+        }
+
+        /* 项目卡片 */
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 30px;
         }
 
         .project-card {
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--gray-200);
             border-radius: 16px;
-            padding: 36px;
-            transition: all 0.4s ease;
-            position: relative;
             overflow: hidden;
-            background: white;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            background: var(--white);
         }
 
         .project-card::before {
@@ -530,38 +464,56 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
-        }
-
-        .project-card:hover::before {
-            transform: scaleX(1);
+            height: 100%;
+            background: linear-gradient(135deg, var(--purple-subtle), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 0;
         }
 
         .project-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 60px rgba(124, 58, 237, 0.1);
-            border-color: var(--purple-light);
+            border-color: var(--purple-primary);
+            box-shadow: 0 20px 60px var(--purple-glow);
         }
 
-        .project-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(167, 139, 250, 0.15));
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--purple-subtle), var(--gray-100));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            transition: transform 0.3s;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .project-card:hover .project-icon {
-            transform: scale(1.1) rotate(5deg);
+        .project-thumbnail::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(124, 58, 237, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+
+        .project-card:hover .project-thumbnail::after {
+            top: 100%;
+            left: 100%;
+        }
+
+        .project-content {
+            padding: 24px;
+            position: relative;
+            z-index: 1;
         }
 
         .project-category {
@@ -569,7 +521,7 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--purple-primary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
@@ -577,337 +529,361 @@
             font-size: 1.3rem;
             font-weight: 700;
             margin-bottom: 12px;
-            color: #1f2937;
+            color: var(--gray-900);
         }
 
         .project-desc {
-            color: var(--gray-text);
+            color: var(--gray-600);
             font-size: 0.9rem;
-            line-height: 1.7;
-            margin-bottom: 20px;
+            line-height: 1.6;
+            margin-bottom: 16px;
         }
 
-        .project-tech {
+        .project-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
 
-        .tech-tag {
+        .tag {
             padding: 4px 12px;
-            background: var(--gray-light);
+            background: var(--gray-100);
             border-radius: 4px;
             font-size: 0.75rem;
-            color: #6b7280;
-            transition: all 0.3s;
+            color: var(--gray-600);
+            transition: var(--transition);
         }
 
-        .project-card:hover .tech-tag {
-            background: rgba(124, 58, 237, 0.08);
+        .project-card:hover .tag {
+            background: var(--purple-subtle);
             color: var(--purple-primary);
         }
 
-        /* ===== 技能模块 ===== */
-        .skills-container {
+        /* 游戏专区 */
+        .games-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            position: relative;
         }
 
-        .skill-group {
-            padding: 36px;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            transition: all 0.3s;
+        .games-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--purple-primary), transparent);
+            opacity: 0.3;
         }
 
-        .skill-group:hover {
-            border-color: var(--purple-light);
-            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.08);
+        .game-section {
+            position: relative;
         }
 
-        .skill-group-title {
-            font-size: 1.1rem;
+        .game-section-title {
+            font-size: 1.8rem;
             font-weight: 700;
-            margin-bottom: 24px;
-            color: #1f2937;
+            margin-bottom: 30px;
+            color: var(--gray-900);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .skill-group-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+        .game-section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             background: linear-gradient(135deg, var(--purple-primary), var(--purple-light));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
+            font-size: 1.5rem;
         }
 
-        .skill-item {
-            margin-bottom: 18px;
-        }
-
-        .skill-info {
+        .game-content {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .skill-name {
-            font-size: 0.85rem;
-            color: #4b5563;
-            font-weight: 500;
+        .game-item {
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            transition: var(--transition);
+            background: var(--white);
         }
 
-        .skill-percent {
-            font-size: 0.8rem;
-            color: var(--purple-primary);
+        .game-item:hover {
+            border-color: var(--purple-primary);
+            box-shadow: 0 10px 30px var(--purple-glow);
+            transform: translateX(5px);
+        }
+
+        .game-item-title {
+            font-size: 1.1rem;
             font-weight: 600;
-        }
-
-        .skill-bar {
-            width: 100%;
-            height: 4px;
-            background: var(--gray-light);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .skill-progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
-            border-radius: 4px;
-            animation: progressFill 1.5s ease-out forwards;
-            transform-origin: left;
-        }
-
-        @keyframes progressFill {
-            from { transform: scaleX(0); }
-            to { transform: scaleX(1); }
-        }
-
-        /* ===== 游戏专区 ===== */
-        .games-section {
-            background: var(--gray-light);
-            border-radius: 24px;
-            padding: 80px 60px;
-            margin: 0 60px;
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .games-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(124, 58, 237, 0.05), transparent);
-            border-radius: 50%;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .game-card {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 30px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 0;
-            background: linear-gradient(to top, rgba(124, 58, 237, 0.03), transparent);
-            transition: height 0.4s ease;
-        }
-
-        .game-card:hover::after {
-            height: 100%;
-        }
-
-        .game-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(124, 58, 237, 0.1);
-        }
-
-        .game-emoji {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
-            display: block;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        .game-card:nth-child(2) .game-emoji { animation-delay: 0.3s; }
-        .game-card:nth-child(3) .game-emoji { animation-delay: 0.6s; }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .game-name {
-            font-size: 1.2rem;
-            font-weight: 700;
             margin-bottom: 8px;
-            color: #1f2937;
+            color: var(--gray-900);
         }
 
-        .game-type {
-            font-size: 0.75rem;
-            color: var(--purple-primary);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .game-desc {
-            font-size: 0.85rem;
-            color: var(--gray-text);
+        .game-item-desc {
+            color: var(--gray-600);
+            font-size: 0.9rem;
             line-height: 1.6;
         }
 
-        /* ===== 时间线 ===== */
-        .timeline {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
+        .game-stats {
+            margin-top: 16px;
         }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--purple-primary), var(--purple-light), transparent);
+        .stat-bar {
+            margin-bottom: 12px;
         }
 
-        .timeline-item {
+        .stat-info {
             display: flex;
-            justify-content: flex-end;
-            padding-right: 50%;
-            margin-bottom: 40px;
-            position: relative;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
         }
 
-        .timeline-item:nth-child(even) {
-            justify-content: flex-start;
-            padding-right: 0;
-            padding-left: 50%;
+        .stat-name {
+            color: var(--gray-600);
         }
 
-        .timeline-dot {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--purple-primary);
-            border: 3px solid white;
-            box-shadow: 0 0 0 3px var(--purple-glow);
-            animation: dotPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes dotPulse {
-            0%, 100% { box-shadow: 0 0 0 3px var(--purple-glow); }
-            50% { box-shadow: 0 0 0 8px rgba(124, 58, 237, 0); }
-        }
-
-        .timeline-content {
-            padding: 24px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin: 0 30px;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .timeline-content:hover {
-            border-color: var(--purple-light);
-            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.08);
-        }
-
-        .timeline-date {
-            font-size: 0.75rem;
+        .stat-value {
             color: var(--purple-primary);
             font-weight: 600;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
         }
 
-        .timeline-title {
-            font-size: 1rem;
+        .stat-progress {
+            width: 100%;
+            height: 6px;
+            background: var(--gray-100);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple-primary), var(--purple-light));
+            border-radius: 6px;
+            animation: fillProgress 1.5s ease-out forwards;
+            transform-origin: left;
+        }
+
+        @keyframes fillProgress {
+            from { transform: scaleX(0); }
+        }
+
+        /* 关于我 */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .skills-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .skill-tag {
+            padding: 10px 20px;
+            border: 1px solid var(--gray-200);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            transition: var(--transition);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--purple-primary);
+            transition: left 0.3s;
+            z-index: 0;
+        }
+
+        .skill-tag:hover::before {
+            left: 0;
+        }
+
+        .skill-tag span {
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s;
+        }
+
+        .skill-tag:hover span {
+            color: white;
+        }
+
+        .skill-tag:hover {
+            border-color: var(--purple-primary);
+            transform: translateY(-3px);
+        }
+
+        /* 留言板 */
+        .guestbook {
+            max-width: 800px;
+            margin: 60px auto 0;
+            padding: 40px;
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            background: var(--white);
+        }
+
+        .guestbook-title {
+            font-size: 1.5rem;
             font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+            color: var(--gray-900);
+        }
+
+        .message-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: var(--white);
+            color: var(--gray-900);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--purple-primary);
+            box-shadow: 0 0 0 3px var(--purple-glow);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .submit-btn {
+            padding: 12px 32px;
+            background: var(--purple-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            align-self: flex-end;
+        }
+
+        .submit-btn:hover {
+            background: var(--purple-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--purple-glow);
+        }
+
+        .messages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message-item {
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            border-left: 3px solid var(--purple-primary);
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: var(--purple-primary);
             margin-bottom: 6px;
-            color: #1f2937;
         }
 
-        .timeline-desc {
-            font-size: 0.85rem;
-            color: var(--gray-text);
+        .message-text {
+            color: var(--gray-600);
+            font-size: 0.9rem;
         }
 
-        /* ===== 页脚 ===== */
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-top: 6px;
+            opacity: 0.7;
+        }
+
+        /* 页脚 */
         footer {
             text-align: center;
             padding: 60px 40px;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid var(--gray-200);
             margin-top: 100px;
         }
 
         .footer-brand {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--purple-primary);
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 16px;
         }
 
         .footer-text {
-            color: var(--gray-text);
-            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-size: 0.9rem;
             margin-bottom: 24px;
         }
 
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 24px;
+            gap: 20px;
             margin-bottom: 30px;
         }
 
         .footer-link {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--border-color);
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--gray-200);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            font-size: 1rem;
-            transition: all 0.3s;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            color: var(--gray-600);
         }
 
         .footer-link:hover {
@@ -915,93 +891,129 @@
             background: var(--purple-primary);
             color: white;
             transform: translateY(-3px);
-            box-shadow: 0 5px 20px var(--purple-glow);
+            box-shadow: 0 10px 30px var(--purple-glow);
         }
 
         .footer-copy {
-            font-size: 0.75rem;
-            color: #9ca3af;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            opacity: 0.7;
         }
 
-        /* ===== 滚动动画 ===== */
-        .reveal {
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s ease;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 999;
         }
 
-        .reveal.active {
+        .back-to-top.visible {
             opacity: 1;
-            transform: translateY(0);
+            visibility: visible;
         }
 
-        /* ===== 响应式 ===== */
-        @media (max-width: 768px) {
-            nav {
-                padding: 16px 24px;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            section {
-                padding: 60px 24px;
-            }
-
-            .about-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .games-section {
-                margin: 0 20px;
-                padding: 40px 24px;
-            }
-
-            .timeline::before {
-                left: 20px;
-            }
-
-            .timeline-item,
-            .timeline-item:nth-child(even) {
-                padding-left: 60px;
-                padding-right: 0;
-                justify-content: flex-start;
-            }
-
-            .timeline-dot {
-                left: 20px;
-            }
-
-            .timeline-content {
-                margin: 0;
-            }
+        .back-to-top:hover {
+            border-color: var(--purple-primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--purple-glow);
         }
 
-        /* ===== 自定义滚动条 ===== */
-        ::-webkit-scrollbar {
-            width: 6px;
+        .back-to-top svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--purple-primary);
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--gray-light);
+        .progress-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--purple-light);
-            border-radius: 3px;
+        .progress-ring-circle {
+            fill: none;
+            stroke: var(--purple-primary);
+            stroke-width: 2;
+            stroke-dasharray: 138;
+            stroke-dashoffset: 138;
+            transition: stroke-dashoffset 0.3s;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
+        /* 弹窗 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gray-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
             background: var(--purple-primary);
+            color: white;
         }
 
-        /* ===== 粒子背景 ===== */
+        /* 粒子背景 */
         .particles {
             position: fixed;
             top: 0;
@@ -1029,295 +1041,202 @@
             90% { opacity: 0.3; }
             100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
         }
+
+        /* 滚动动画 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 24px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            section {
+                padding: 60px 24px;
+            }
+
+            .games-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .games-container::before {
+                display: none;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--purple-light);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--purple-primary);
+        }
     </style>
 </head>
 <body>
+    <!-- 加载进度条 -->
+    <div class="loading-bar"></div>
+
     <!-- 粒子背景 -->
     <div class="particles" id="particles"></div>
 
     <!-- 导航栏 -->
-    <nav>
+    <nav id="navbar">
         <div class="nav-logo">失眠夜</div>
-        <ul class="nav-links">
-            <li><a href="#about">关于</a></li>
-            <li><a href="#projects">项目</a></li>
-            <li><a href="#skills">技能</a></li>
-            <li><a href="#games">游戏</a></li>
-            <li><a href="#journey">历程</a></li>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home" class="active">首页</a></li>
+            <li><a href="#projects">代码作品</a></li>
+            <li><a href="#games">游戏专区</a></li>
+            <li><a href="#about">关于我</a></li>
+            <li><a href="#contact">联系</a></li>
         </ul>
+        <div class="nav-indicator" id="navIndicator"></div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
     </nav>
 
     <!-- Hero -->
-    <section class="hero">
-        <div class="floating-shapes">
-            <div class="shape"></div>
-            <div class="shape"></div>
-            <div class="shape"></div>
-            <div class="shape"></div>
-            <div class="shape"></div>
+    <section class="hero" id="home">
+        <div class="hero-bg">
+            <div class="hero-glow"></div>
+            <div class="hero-grid"></div>
         </div>
-        <div class="hero-badge">✦ CREATIVE DEVELOPER</div>
-        <h1 class="hero-title">你好，我是<span>失眠夜</span></h1>
-        <p class="hero-subtitle">一个热爱编程与游戏的创造者，在代码的世界里构建属于自己的宇宙</p>
-        <div class="hero-line"></div>
-        <div class="hero-cta">
-            <a href="#projects" class="btn btn-primary">查看项目</a>
-            <a href="#about" class="btn btn-outline">了解更多</a>
+        <div class="hero-content">
+            <h1 class="hero-title">失眠夜</h1>
+            <p class="hero-subtitle">在代码与游戏的世界里，创造属于自己的宇宙</p>
+        </div>
+        <div class="scroll-hint">
+            <span>SCROLL</span>
+            <div class="scroll-arrow"></div>
         </div>
     </section>
 
-    <!-- 关于我 -->
-    <section id="about">
-        <div class="section-header reveal">
-            <div class="section-tag">About Me</div>
-            <h2 class="section-title">关于我</h2>
-            <div class="section-line"></div>
-        </div>
-        <div class="about-grid">
-            <div class="about-visual reveal">
-                <div class="about-card">
-                    <div class="avatar-placeholder">🌙</div>
-                    <div class="about-card-name">失眠夜</div>
-                    <div class="about-card-role">Full Stack Developer</div>
-                    <div class="about-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">50+</div>
-                            <div class="stat-label">项目</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">3+</div>
-                            <div class="stat-label">年经验</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">∞</div>
-                            <div class="stat-label">热情</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="about-content reveal">
-                <h3>在深夜中创造无限可能</h3>
-                <p>
-                    我是一名热爱编程的开发者，擅长使用多种技术栈构建有趣的项目。
-                    从 Web 开发到游戏模组，从自动化工具到创意应用，我享受将想法变为现实的过程。
-                </p>
-                <p>
-                    在闲暇时光，我喜欢沉浸在 CS 的竞技世界和 Minecraft 的创造空间中，
-                    这些游戏不仅带给我快乐，也激发了我对游戏开发和模组制作的兴趣。
-                </p>
-                <div class="about-tags">
-                    <span class="about-tag">Web 开发</span>
-                    <span class="about-tag">游戏模组</span>
-                    <span class="about-tag">自动化</span>
-                    <span class="about-tag">CS2</span>
-                    <span class="about-tag">Minecraft</span>
-                    <span class="about-tag">Python</span>
-                    <span class="about-tag">JavaScript</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 项目展示 -->
+    <!-- 代码作品 -->
     <section id="projects">
+        <div class="corner-decoration corner-tl"></div>
+        <div class="corner-decoration corner-tr"></div>
+        <div class="corner-decoration corner-bl"></div>
+        <div class="corner-decoration corner-br"></div>
+        
         <div class="section-header reveal">
             <div class="section-tag">Projects</div>
-            <h2 class="section-title">精选项目</h2>
+            <h2 class="section-title">代码作品</h2>
             <div class="section-line"></div>
         </div>
-        <div class="projects-grid">
-            <div class="project-card reveal">
-                <div class="project-icon">🎮</div>
-                <div class="project-category">GAME MOD</div>
-                <h3 class="project-title">CS2 自定义准星工具</h3>
-                <p class="project-desc">
-                    一款为 CS2 玩家打造的准星自定义工具，支持实时预览、参数导入导出，
-                    帮助玩家快速找到最适合自己的准星设置。
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">PyQt</span>
-                    <span class="tech-tag">CS2 API</span>
-                </div>
-            </div>
-            <div class="project-card reveal">
-                <div class="project-icon">⛏️</div>
-                <div class="project-category">MINECRAFT</div>
-                <h3 class="project-title">MC 自动化红石生成器</h3>
-                <p class="project-desc">
-                    可视化红石电路设计工具，支持 3D 预览和结构导出为 MC 建筑文件，
-                    让红石创作变得更加直观高效。
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">JavaScript</span>
-                    <span class="tech-tag">Three.js</span>
-                    <span class="tech-tag">WebGL</span>
-                </div>
-            </div>
-            <div class="project-card reveal">
-                <div class="project-icon">🤖</div>
-                <div class="project-category">TOOL</div>
-                <h3 class="project-title">智能游戏数据分析平台</h3>
-                <p class="project-desc">
-                    自动采集和分析游戏数据，提供可视化报表和趋势分析，
-                    帮助玩家追踪自己的成长轨迹和竞技表现。
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">Python</span>
-                    <span class="tech-tag">FastAPI</span>
-                    <span class="tech-tag">Vue.js</span>
-                    <span class="tech-tag">ECharts</span>
-                </div>
-            </div>
-            <div class="project-card reveal">
-                <div class="project-icon">🌐</div>
-                <div class="project-category">WEB APP</div>
-                <h3 class="project-title">个人知识库系统</h3>
-                <p class="project-desc">
-                    基于 Markdown 的个人知识管理系统，支持双向链接、图谱视图和全文搜索，
-                    打造属于自己的第二大脑。
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">React</span>
-                    <span class="tech-tag">Node.js</span>
-                    <span class="tech-tag">MongoDB</span>
-                </div>
-            </div>
-            <div class="project-card reveal">
-                <div class="project-icon">🎨</div>
-                <div class="project-category">CREATIVE</div>
-                <h3 class="project-title">像素艺术生成器</h3>
-                <p class="project-desc">
-                    将照片自动转换为像素风格艺术画，支持多种调色板和分辨率设置，
-                    可用于 MC 皮肤制作和复古风格设计。
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">Canvas API</span>
-                    <span class="tech-tag">TypeScript</span>
-                    <span class="tech-tag">Web Workers</span>
-                </div>
-            </div>
-            <div class="project-card reveal">
-                <div class="project-icon">📡</div>
-                <div class="project-category">BOT</div>
-                <h3 class="project-title">多功能 Discord Bot</h3>
-                <p class="project-desc">
-                    集成游戏查询、服务器监控、音乐播放和社区管理等功能于一体的 Discord 机器人，
-                    服务多个游戏社区。
-                </p>
-                <div class="project-tech">
-                    <span class="tech-tag">Node.js</span>
-                    <span class="tech-tag">Discord.js</span>
-                    <span class="tech-tag">SQLite</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- 技能 -->
-    <section id="skills">
-        <div class="section-header reveal">
-            <div class="section-tag">Skills</div>
-            <h2 class="section-title">技术栈</h2>
-            <div class="section-line"></div>
+        <div class="filter-tabs reveal">
+            <button class="filter-tab active" data-filter="all"><span>全部</span></button>
+            <button class="filter-tab" data-filter="tools"><span>趣味工具</span></button>
+            <button class="filter-tab" data-filter="frontend"><span>前端创意</span></button>
+            <button class="filter-tab" data-filter="games"><span>游戏开发</span></button>
         </div>
-        <div class="skills-container">
-            <div class="skill-group reveal">
-                <div class="skill-group-title">
-                    <div class="skill-group-icon">💻</div>
-                    前端开发
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">HTML / CSS</span>
-                        <span class="skill-percent">95%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 95%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">JavaScript / TypeScript</span>
-                        <span class="skill-percent">90%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 90%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">React / Vue</span>
-                        <span class="skill-percent">85%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 85%"></div>
+
+        <div class="projects-grid" id="projectsGrid">
+            <div class="project-card reveal" data-category="tools">
+                <div class="project-thumbnail">🎯</div>
+                <div class="project-content">
+                    <div class="project-category">趣味工具</div>
+                    <h3 class="project-title">CS2 准星自定义工具</h3>
+                    <p class="project-desc">实时预览准星效果，支持参数导入导出，帮助玩家快速找到最佳设置</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">PyQt</span>
+                        <span class="tag">CS2</span>
                     </div>
                 </div>
             </div>
-            <div class="skill-group reveal">
-                <div class="skill-group-title">
-                    <div class="skill-group-icon">⚙️</div>
-                    后端开发
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">Python</span>
-                        <span class="skill-percent">92%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 92%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">Node.js</span>
-                        <span class="skill-percent">80%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 80%"></div>
-                    </div>
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">数据库 (MySQL/MongoDB)</span>
-                        <span class="skill-percent">78%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 78%"></div>
+
+            <div class="project-card reveal" data-category="games">
+                <div class="project-thumbnail">⛏️</div>
+                <div class="project-content">
+                    <div class="project-category">游戏开发</div>
+                    <h3 class="project-title">MC 红石电路生成器</h3>
+                    <p class="project-desc">可视化设计红石电路，3D预览并导出为建筑文件</p>
+                    <div class="project-tags">
+                        <span class="tag">JavaScript</span>
+                        <span class="tag">Three.js</span>
+                        <span class="tag">Minecraft</span>
                     </div>
                 </div>
             </div>
-            <div class="skill-group reveal">
-                <div class="skill-group-title">
-                    <div class="skill-group-icon">🎮</div>
-                    游戏相关
-                </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">游戏模组开发</span>
-                        <span class="skill-percent">88%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 88%"></div>
+
+            <div class="project-card reveal" data-category="frontend">
+                <div class="project-thumbnail">🎨</div>
+                <div class="project-content">
+                    <div class="project-category">前端创意</div>
+                    <h3 class="project-title">像素艺术转换器</h3>
+                    <p class="project-desc">将照片转换为像素风格，支持多种调色板和分辨率</p>
+                    <div class="project-tags">
+                        <span class="tag">Canvas</span>
+                        <span class="tag">TypeScript</span>
                     </div>
                 </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">游戏数据分析</span>
-                        <span class="skill-percent">82%</span>
-                    </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 82%"></div>
+            </div>
+
+            <div class="project-card reveal" data-category="tools">
+                <div class="project-thumbnail">📊</div>
+                <div class="project-content">
+                    <div class="project-category">趣味工具</div>
+                    <h3 class="project-title">游戏数据分析平台</h3>
+                    <p class="project-desc">自动采集游戏数据，提供可视化报表和趋势分析</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">FastAPI</span>
+                        <span class="tag">Vue.js</span>
                     </div>
                 </div>
-                <div class="skill-item">
-                    <div class="skill-info">
-                        <span class="skill-name">服务器运维</span>
-                        <span class="skill-percent">75%</span>
+            </div>
+
+            <div class="project-card reveal" data-category="frontend">
+                <div class="project-thumbnail">🌐</div>
+                <div class="project-content">
+                    <div class="project-category">前端创意</div>
+                    <h3 class="project-title">个人知识库系统</h3>
+                    <p class="project-desc">基于Markdown的知识管理，支持双向链接和图谱视图</p>
+                    <div class="project-tags">
+                        <span class="tag">React</span>
+                        <span class="tag">Node.js</span>
+                        <span class="tag">MongoDB</span>
                     </div>
-                    <div class="skill-bar">
-                        <div class="skill-progress" style="width: 75%"></div>
+                </div>
+            </div>
+
+            <div class="project-card reveal" data-category="games">
+                <div class="project-thumbnail">🤖</div>
+                <div class="project-content">
+                    <div class="project-category">游戏开发</div>
+                    <h3 class="project-title">Discord 游戏机器人</h3>
+                    <p class="project-desc">集成游戏查询、服务器监控和社区管理功能</p>
+                    <div class="project-tags">
+                        <span class="tag">Node.js</span>
+                        <span class="tag">Discord.js</span>
                     </div>
                 </div>
             </div>
@@ -1326,89 +1245,164 @@
 
     <!-- 游戏专区 -->
     <section id="games">
-        <div class="games-section">
-            <div class="section-header reveal">
-                <div class="section-tag">Gaming</div>
-                <h2 class="section-title">游戏世界</h2>
-                <div class="section-line"></div>
+        <div class="corner-decoration corner-tl"></div>
+        <div class="corner-decoration corner-tr"></div>
+        <div class="corner-decoration corner-bl"></div>
+        <div class="corner-decoration corner-br"></div>
+
+        <div class="section-header reveal">
+            <div class="section-tag">Gaming</div>
+            <h2 class="section-title">游戏专区</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="games-container">
+            <div class="game-section reveal">
+                <h3 class="game-section-title">
+                    <div class="game-section-icon">🔫</div>
+                    CS 系列
+                </h3>
+                <div class="game-content">
+                    <div class="game-item">
+                        <h4 class="game-item-title">个人段位</h4>
+                        <p class="game-item-desc">Global Elite | 5E 2800+ | Faceit Level 10</p>
+                        <div class="game-stats">
+                            <div class="stat-bar">
+                                <div class="stat-info">
+                                    <span class="stat-name">爆头率</span>
+                                    <span class="stat-value">58%</span>
+                                </div>
+                                <div class="stat-progress">
+                                    <div class="stat-fill" style="width: 58%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-bar">
+                                <div class="stat-info">
+                                    <span class="stat-name">胜率</span>
+                                    <span class="stat-value">62%</span>
+                                </div>
+                                <div class="stat-progress">
+                                    <div class="stat-fill" style="width: 62%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-item">
+                        <h4 class="game-item-title">常用配置</h4>
+                        <p class="game-item-desc">分辨率 1280x960 | 灵敏度 1.8 | 准星自定义样式</p>
+                    </div>
+                    <div class="game-item">
+                        <h4 class="game-item-title">游戏心得</h4>
+                        <p class="game-item-desc">专注预瞄和道具运用，善于分析对手习惯，团队配合意识强</p>
+                    </div>
+                </div>
             </div>
-            <div class="games-grid">
-                <div class="game-card reveal">
-                    <span class="game-emoji">🔫</span>
-                    <div class="game-type">FPS / 竞技</div>
-                    <h3 class="game-name">Counter-Strike 2</h3>
-                    <p class="game-desc">
-                        热爱 CS 竞技，擅长开发辅助工具和数据分析程序。
-                        深入研究游戏机制，用代码提升游戏体验。
-                    </p>
-                </div>
-                <div class="game-card reveal">
-                    <span class="game-emoji">⛏️</span>
-                    <div class="game-type">沙盒 / 创造</div>
-                    <h3 class="game-name">Minecraft</h3>
-                    <p class="game-desc">
-                        MC 资深玩家与模组开发者，热衷于红石科技、
-                        自动化农场和服务器插件开发。
-                    </p>
-                </div>
-                <div class="game-card reveal">
-                    <span class="game-emoji">🎯</span>
-                    <div class="game-type">独立 / 创意</div>
-                    <h3 class="game-name">独立游戏开发</h3>
-                    <p class="game-desc">
-                        尝试使用各种引擎制作小型独立游戏，
-                        将编程技能与游戏创意相结合。
-                    </p>
+
+            <div class="game-section reveal">
+                <h3 class="game-section-title">
+                    <div class="game-section-icon">⛏️</div>
+                    我的世界
+                </h3>
+                <div class="game-content">
+                    <div class="game-item">
+                        <h4 class="game-item-title">红石作品</h4>
+                        <p class="game-item-desc">全自动农场、隐藏门系统、红石计算机等创意作品</p>
+                        <div class="game-stats">
+                            <div class="stat-bar">
+                                <div class="stat-info">
+                                    <span class="stat-name">红石熟练度</span>
+                                    <span class="stat-value">92%</span>
+                                </div>
+                                <div class="stat-progress">
+                                    <div class="stat-fill" style="width: 92%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-item">
+                        <h4 class="game-item-title">建筑作品</h4>
+                        <p class="game-item-desc">中世纪城堡、现代都市、奇幻景观等多种风格建筑</p>
+                    </div>
+                    <div class="game-item">
+                        <h4 class="game-item-title">自制模组</h4>
+                        <p class="game-item-desc">开发自定义模组和整合包，优化游戏体验</p>
+                        <div class="game-stats">
+                            <div class="stat-bar">
+                                <div class="stat-info">
+                                    <span class="stat-name">模组开发</span>
+                                    <span class="stat-value">85%</span>
+                                </div>
+                                <div class="stat-progress">
+                                    <div class="stat-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 历程 -->
-    <section id="journey">
+    <!-- 关于我 -->
+    <section id="about">
+        <div class="corner-decoration corner-tl"></div>
+        <div class="corner-decoration corner-tr"></div>
+        <div class="corner-decoration corner-bl"></div>
+        <div class="corner-decoration corner-br"></div>
+
         <div class="section-header reveal">
-            <div class="section-tag">Journey</div>
-            <h2 class="section-title">成长历程</h2>
+            <div class="section-tag">About</div>
+            <h2 class="section-title">关于我</h2>
             <div class="section-line"></div>
         </div>
-        <div class="timeline">
-            <div class="timeline-item reveal">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <div class="timeline-date">2024</div>
-                    <h4 class="timeline-title">全栈开发进阶</h4>
-                    <p class="timeline-desc">深入学习现代 Web 框架，开始构建完整的应用系统</p>
-                </div>
+
+        <div class="about-content reveal">
+            <p class="about-text">
+                我是一名热爱编程与游戏的创造者。在代码的世界里，我享受将想法变为现实的过程；
+                在游戏中，我探索无限的可能性。从 Web 开发到游戏模组，从自动化工具到创意应用，
+                我始终保持对技术的热情和对创意的追求。
+            </p>
+            <div class="skills-cloud">
+                <div class="skill-tag"><span>JavaScript</span></div>
+                <div class="skill-tag"><span>Python</span></div>
+                <div class="skill-tag"><span>React</span></div>
+                <div class="skill-tag"><span>Vue.js</span></div>
+                <div class="skill-tag"><span>Node.js</span></div>
+                <div class="skill-tag"><span>Three.js</span></div>
+                <div class="skill-tag"><span>游戏模组</span></div>
+                <div class="skill-tag"><span>红石科技</span></div>
+                <div class="skill-tag"><span>自动化</span></div>
+                <div class="skill-tag"><span>数据分析</span></div>
+                <div class="skill-tag"><span>UI/UX</span></div>
+                <div class="skill-tag"><span>创意编程</span></div>
             </div>
-            <div class="timeline-item reveal">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <div class="timeline-date">2023</div>
-                    <h4 class="timeline-title">游戏模组开发</h4>
-                    <p class="timeline-desc">开始为 CS 和 Minecraft 开发自定义模组和工具</p>
+        </div>
+
+        <!-- 留言板 -->
+        <div class="guestbook reveal">
+            <h3 class="guestbook-title">💬 留言板</h3>
+            <form class="message-form" id="messageForm">
+                <input type="text" class="form-input" placeholder="你的名字" id="authorInput" required>
+                <textarea class="form-input form-textarea" placeholder="留下你的想法..." id="messageInput" required></textarea>
+                <button type="submit" class="submit-btn">发送留言</button>
+            </form>
+            <div class="messages-list" id="messagesList">
+                <div class="message-item">
+                    <div class="message-author">访客 A</div>
+                    <div class="message-text">很棒的作品展示，期待更多创意项目！</div>
+                    <div class="message-time">2024-01-15</div>
                 </div>
-            </div>
-            <div class="timeline-item reveal">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <div class="timeline-date">2022</div>
-                    <h4 class="timeline-title">Python 深入</h4>
-                    <p class="timeline-desc">系统学习 Python，开发自动化脚本和数据分析工具</p>
-                </div>
-            </div>
-            <div class="timeline-item reveal">
-                <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                    <div class="timeline-date">2021</div>
-                    <h4 class="timeline-title">编程启蒙</h4>
-                    <p class="timeline-desc">接触编程，从 HTML/CSS 开始踏上代码之旅</p>
+                <div class="message-item">
+                    <div class="message-author">游戏玩家</div>
+                    <div class="message-text">CS 工具很实用，感谢分享！</div>
+                    <div class="message-time">2024-01-14</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 页脚 -->
-    <footer>
+    <footer id="contact">
         <div class="footer-brand">失眠夜</div>
         <p class="footer-text">在深夜中编织代码，在代码中寻找灵感</p>
         <div class="footer-links">
@@ -1420,33 +1414,201 @@
         <p class="footer-copy">© 2024 失眠夜. All rights reserved. Built with 💜</p>
     </footer>
 
+    <!-- 回到顶部 -->
+    <button class="back-to-top" id="backToTop">
+        <svg class="progress-ring" viewBox="0 0 50 50">
+            <circle class="progress-ring-circle" cx="25" cy="25" r="22"></circle>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"></path>
+        </svg>
+    </button>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
     <script>
-        // 滚动显示动画
-        function revealOnScroll() {
-            const reveals = document.querySelectorAll('.reveal');
-            reveals.forEach(el => {
-                const windowHeight = window.innerHeight;
-                const elementTop = el.getBoundingClientRect().top;
-                const revealPoint = 120;
-                if (elementTop < windowHeight - revealPoint) {
-                    el.classList.add('active');
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const navIndicator = document.getElementById('navIndicator');
+        const sections = document.querySelectorAll('section');
+
+        window.addEventListener('scroll', () => {
+            // 导航栏背景
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // 更新当前活动链接
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
                 }
             });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                    updateIndicator(link);
+                }
+            });
+
+            // 回到顶部按钮
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+
+            // 更新进度圆环
+            const scrollProgress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 138;
+            document.querySelector('.progress-ring-circle').style.strokeDashoffset = 138 - scrollProgress;
+        });
+
+        function updateIndicator(activeLink) {
+            const linkRect = activeLink.getBoundingClientRect();
+            const navRect = navbar.getBoundingClientRect();
+            navIndicator.style.width = linkRect.width + 'px';
+            navIndicator.style.left = (linkRect.left - navRect.left) + 'px';
         }
 
-        window.addEventListener('scroll', revealOnScroll);
-        window.addEventListener('load', revealOnScroll);
+        // 初始化指示器
+        window.addEventListener('load', () => {
+            const activeLink = document.querySelector('.nav-links a.active');
+            if (activeLink) updateIndicator(activeLink);
+        });
+
+        window.addEventListener('resize', () => {
+            const activeLink = document.querySelector('.nav-links a.active');
+            if (activeLink) updateIndicator(activeLink);
+        });
+
+        // 主题切换
+        const themeToggle = document.getElementById('themeToggle');
+        let isDark = false;
+
+        themeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+        });
+
+        // 筛选功能
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const projectCards = document.querySelectorAll('.project-card');
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const filter = tab.dataset.filter;
+                projectCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = 'block';
+                        setTimeout(() => card.style.opacity = '1', 10);
+                    } else {
+                        card.style.opacity = '0';
+                        setTimeout(() => card.style.display = 'none', 300);
+                    }
+                });
+            });
+        });
+
+        // 弹窗功能
+        const modal = document.getElementById('projectModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalBody = document.getElementById('modalBody');
+
+        projectCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const title = card.querySelector('.project-title').textContent;
+                const desc = card.querySelector('.project-desc').textContent;
+                const category = card.querySelector('.project-category').textContent;
+                const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent).join(', ');
+
+                modalBody.innerHTML = `
+                    <h2 style="margin-bottom: 16px; color: var(--purple-primary);">${title}</h2>
+                    <p style="color: var(--gray-600); margin-bottom: 20px; line-height: 1.8;">${desc}</p>
+                    <p style="font-size: 0.9rem; color: var(--gray-600);"><strong>分类：</strong>${category}</p>
+                    <p style="font-size: 0.9rem; color: var(--gray-600); margin-top: 8px;"><strong>技术栈：</strong>${tags}</p>
+                `;
+                modal.classList.add('active');
+            });
+        });
+
+        modalClose.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // 留言板
+        const messageForm = document.getElementById('messageForm');
+        const messagesList = document.getElementById('messagesList');
+
+        messageForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const author = document.getElementById('authorInput').value;
+            const message = document.getElementById('messageInput').value;
+            const date = new Date().toISOString().split('T')[0];
+
+            const messageItem = document.createElement('div');
+            messageItem.className = 'message-item';
+            messageItem.innerHTML = `
+                <div class="message-author">${author}</div>
+                <div class="message-text">${message}</div>
+                <div class="message-time">${date}</div>
+            `;
+
+            messagesList.insertBefore(messageItem, messagesList.firstChild);
+            messageForm.reset();
+        });
+
+        // 回到顶部
+        document.getElementById('backToTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 滚动显示动画
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(el => revealObserver.observe(el));
 
         // 生成粒子
         function createParticles() {
             const container = document.getElementById('particles');
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 15; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                particle.style.animationDelay = (Math.random() * 10) + 's';
-                particle.style.width = (Math.random() * 4 + 2) + 'px';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                particle.style.animationDelay = (Math.random() * 5) + 's';
+                particle.style.width = (Math.random() * 3 + 2) + 'px';
                 particle.style.height = particle.style.width;
                 container.appendChild(particle);
             }
