@@ -1,1964 +1,1505 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>失眠夜 · 个人空间</title>
-<style>
-/* ========== 全局主题变量 ========== */
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f7ff;
-  --accent-primary: #7c3aed;
-  --accent-secondary: #a78bfa;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
-  --border-color: #e9d5ff;
-  --shadow-color: rgba(124, 58, 237, 0.15);
-  --radius: 12px;
-  --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  --max-width: 1200px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>失眠夜 · 个人空间</title>
+    <style>
+        /* 全局变量与重置 */
+        :root {
+            --primary: #6C5CE7;
+            --primary-dark: #5B4CDB;
+            --primary-light: #A29BFE;
+            --bg: #FFFFFF;
+            --bg-secondary: #F8F9FC;
+            --text: #2D3436;
+            --text-secondary: #636E72;
+            --border: rgba(108, 92, 231, 0.15);
+            --shadow: 0 4px 20px rgba(108, 92, 231, 0.08);
+            --shadow-hover: 0 8px 30px rgba(108, 92, 231, 0.15);
+        }
 
-/* 暗色模式 */
-body.dark {
-  --bg-primary: #0f0f1a;
-  --bg-secondary: #1a1a2e;
-  --accent-primary: #a78bfa;
-  --accent-secondary: #c4b5fd;
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --border-color: #312e81;
-  --shadow-color: rgba(167, 139, 250, 0.2);
-}
+        [data-theme="dark"] {
+            --bg: #121218;
+            --bg-secondary: #1A1A24;
+            --text: #DFE6E9;
+            --text-secondary: #B2BEC3;
+            --border: rgba(108, 92, 231, 0.25);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 30px rgba(108, 92, 231, 0.2);
+        }
 
-/* 深夜彩蛋模式 */
-body.night-mode {
-  --bg-primary: #0a0a1a;
-  --bg-secondary: #12122a;
-  --accent-primary: #c084fc;
-  --accent-secondary: #e9d5ff;
-  --text-primary: #f0e7ff;
-  --text-secondary: #a78bfa;
-  --border-color: #4c1d95;
-  --shadow-color: rgba(192, 132, 252, 0.3);
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* ========== 基础重置 ========== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-html {
-  scroll-behavior: smooth;
-}
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  transition: background var(--transition), color var(--transition);
-  overflow-x: hidden;
-}
+        html {
+            scroll-behavior: smooth;
+        }
 
-/* ========== 背景装饰层（带滚动视差） ========== */
-.bg-grid {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 120%;
-  background-image: 
-    linear-gradient(var(--border-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-  background-size: 50px 50px;
-  opacity: 0.3;
-  z-index: -2;
-  animation: gridBreath 5s ease-in-out infinite alternate;
-  will-change: opacity, transform;
-  transform: translateZ(0);
-}
-@keyframes gridBreath {
-  0% { opacity: 0.2; }
-  100% { opacity: 0.4; }
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-.bg-lines {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-  pointer-events: none;
-}
-.bg-line {
-  position: absolute;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
-  opacity: 0.4;
-  will-change: transform;
-}
-.bg-line:nth-child(1) { top: 15%; left: -10%; width: 30%; animation: lineMove1 20s linear infinite alternate; }
-.bg-line:nth-child(2) { top: 35%; right: -10%; width: 25%; animation: lineMove2 25s linear infinite alternate; }
-.bg-line:nth-child(3) { top: 60%; left: 5%; width: 20%; animation: lineMove3 18s linear infinite alternate; }
-.bg-line:nth-child(4) { top: 80%; right: 15%; width: 35%; animation: lineMove4 22s linear infinite alternate; }
+        /* 滚动进度条 */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            z-index: 1001;
+            transition: width 0.1s linear;
+        }
 
-@keyframes lineMove1 { 0% { transform: translateX(0) rotate(2deg); } 100% { transform: translateX(100px) rotate(-2deg); } }
-@keyframes lineMove2 { 0% { transform: translateX(0) rotate(-1deg); } 100% { transform: translateX(-80px) rotate(2deg); } }
-@keyframes lineMove3 { 0% { transform: translateX(0) rotate(1deg); } 100% { transform: translateX(120px) rotate(-1deg); } }
-@keyframes lineMove4 { 0% { transform: translateX(0) rotate(-2deg); } 100% { transform: translateX(-100px) rotate(1deg); } }
+        /* 流星背景容器 */
+        .meteor-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-/* 漂浮星点 */
-.bg-stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
-.star {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--accent-secondary);
-  will-change: transform, opacity;
-  animation: starFloat 15s infinite ease-in-out alternate;
-}
-@keyframes starFloat {
-  0% { transform: translate(0, 0) scale(1); opacity: 0.2; }
-  100% { transform: translate(30px, -20px) scale(1.2); opacity: 0.5; }
-}
-body.dark .star { opacity: 0.6; }
-body.night-mode .star { opacity: 0.9; }
+        /* 修复后流星样式 */
+        .meteor {
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, rgba(108, 92, 231, 0.8), transparent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: meteor-fall linear infinite;
+            transform: rotate(-35deg);
+        }
 
-/* 流星效果（深夜模式专属 · 已修复方向与位置） */
-.meteor-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-body.night-mode .meteor-container { opacity: 1; }
-.meteor {
-  position: absolute;
-  width: 2px;
-  height: 90px;
-  background: linear-gradient(to bottom, var(--accent-secondary), transparent);
-  transform: rotate(45deg);
-  transform-origin: top center;
-  opacity: 0;
-  will-change: left, top, opacity;
-  animation-name: meteorFall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-@keyframes meteorFall {
-  0% {
-    opacity: 0;
-    left: var(--x-start);
-    top: var(--y-start);
-  }
-  15% { opacity: 0.9; }
-  85% { opacity: 0.9; }
-  100% {
-    opacity: 0;
-    left: calc(var(--x-start) - 380px);
-    top: calc(var(--y-start) + 380px);
-  }
-}
+        @keyframes meteor-fall {
+            0% {
+                opacity: 0;
+                transform: rotate(-35deg) translateY(-100px);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: rotate(-35deg) translateY(120vh);
+            }
+        }
 
-/* ========== 滚动进度条 ========== */
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-  z-index: 1001;
-  width: 0%;
-  transition: width 0.1s linear;
-}
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 16px 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
 
-/* ========== 导航栏 ========== */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 16px 0;
-  z-index: 1000;
-  transition: all var(--transition);
-  backdrop-filter: blur(0px);
-  border-bottom: 1px solid transparent;
-  transform: translateY(-100%);
-  animation: navSlideDown 0.8s ease 0.3s forwards;
-}
-@keyframes navSlideDown {
-  to { transform: translateY(0); }
-}
-.navbar.scrolled {
-  background: color-mix(in srgb, var(--bg-primary) 80%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-color);
-  padding: 12px 0;
-}
-.nav-container {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.nav-logo {
-  font-size: 22px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.3s ease;
-}
-.nav-logo:hover { transform: scale(1.05); }
-.nav-links {
-  display: flex;
-  gap: 28px;
-  list-style: none;
-}
-.nav-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 15px;
-  position: relative;
-  transition: color var(--transition);
-  padding: 4px 0;
-}
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--accent-primary);
-  transition: width 0.3s ease;
-}
-.nav-links a:hover,
-.nav-links a.active {
-  color: var(--accent-primary);
-}
-.nav-links a:hover::after,
-.nav-links a.active::after {
-  width: 100%;
-}
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.icon-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
-}
-.icon-btn:hover {
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
-  transform: scale(1.05);
-}
-.icon-btn:active { transform: scale(0.97); }
-.back-top-btn {
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition);
-}
-.back-top-btn.show {
-  opacity: 1;
-  visibility: visible;
-}
-.menu-toggle {
-  display: none;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  color: var(--text-primary);
-}
+        [data-theme="dark"] nav {
+            background: rgba(18, 18, 24, 0.7);
+        }
 
-/* ========== 通用板块样式 ========== */
-.section {
-  padding: 80px 24px;
-  max-width: var(--max-width);
-  margin: 0 auto;
-}
-.section-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 40px;
-  text-align: center;
-  position: relative;
-  color: var(--text-primary);
-}
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
-  border-radius: 2px;
-}
-.divider {
-  height: 1px;
-  width: 80%;
-  margin: 0 auto;
-  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
-}
+        nav.scrolled {
+            border-bottom-color: var(--border);
+            box-shadow: var(--shadow);
+        }
 
-/* 滚动入场动画 */
-.fade-in-up {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.fade-in-up.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-/* ========== Hero首屏 ========== */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  position: relative;
-  padding: 0 24px;
-}
-.hero-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: -1;
-  animation: glowBreath 6s ease-in-out infinite alternate;
-  will-change: transform, opacity;
-}
-@keyframes glowBreath {
-  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-}
-.hero-title {
-  font-size: 56px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 16px;
-  opacity: 0;
-  animation: fadeUp 0.8s ease forwards;
-}
-.hero-subtitle {
-  font-size: 20px;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
-  opacity: 0;
-  animation: fadeUp 0.8s ease 0.2s forwards;
-}
-.hero-slogan {
-  font-size: 18px;
-  color: var(--text-primary);
-  margin-bottom: 32px;
-  min-height: 28px;
-  font-family: "Courier New", monospace;
-  opacity: 0;
-  animation: fadeUp 0.8s ease 0.4s forwards;
-}
-.typewriter {
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid var(--accent-primary);
-  width: 0;
-  animation: typing 3.5s steps(30, end) 0.6s forwards, blink 0.75s step-end infinite;
-}
-@keyframes typing { from { width: 0; } to { width: 100%; } }
-@keyframes blink { 50% { border-color: transparent; } }
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
 
-.hero-tags {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
-  opacity: 0;
-  animation: fadeUp 0.8s ease 1s forwards;
-}
-.tag {
-  padding: 8px 20px;
-  border-radius: 20px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  color: var(--accent-primary);
-  font-size: 14px;
-  transition: all 0.3s ease;
-  cursor: default;
-}
-.tag:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px var(--shadow-color);
-  border-color: var(--accent-primary);
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
 
-/* ========== 关于我 & 技能雷达 ========== */
-.about-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-}
-.about-text p {
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
-}
-.skill-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.skill-tag {
-  padding: 6px 14px;
-  border-radius: 8px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  font-size: 13px;
-  color: var(--text-primary);
-  transition: all 0.3s ease;
-  position: relative;
-  cursor: default;
-}
-.skill-tag:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
-  box-shadow: 0 4px 12px var(--shadow-color);
-}
-.skill-tag::after {
-  content: attr(data-level);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-4px);
-  background: var(--accent-primary);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.skill-tag:hover::after { opacity: 1; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            position: relative;
+            transition: color 0.3s ease;
+        }
 
-.radar-container { display: flex; justify-content: center; }
-.radar-svg { width: 300px; height: 300px; }
-.radar-polygon {
-  fill: rgba(124, 58, 237, 0.2);
-  stroke: var(--accent-primary);
-  stroke-width: 2;
-  transform-origin: center;
-  transform: scale(0);
-  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.radar-container.visible .radar-polygon { transform: scale(1); }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
 
-/* ========== 时间线 ========== */
-.timeline {
-  position: relative;
-  max-width: 800px;
-  margin: 0 auto;
-  padding-left: 30px;
-}
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--border-color);
-}
-.timeline-item {
-  position: relative;
-  margin-bottom: 32px;
-  padding-left: 30px;
-}
-.timeline-dot {
-  position: absolute;
-  left: -26px;
-  top: 6px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--border-color);
-  border: 3px solid var(--bg-primary);
-  transition: all 0.5s ease;
-}
-.timeline-item.active .timeline-dot {
-  background: var(--accent-primary);
-  transform: scale(1.2);
-  box-shadow: 0 0 12px var(--accent-primary);
-}
-.timeline-date {
-  font-size: 14px;
-  color: var(--accent-primary);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.timeline-content {
-  background: var(--bg-secondary);
-  padding: 16px 20px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-}
-.timeline-item:hover .timeline-content {
-  transform: translateX(4px);
-  border-color: var(--accent-primary);
-  box-shadow: 0 4px 16px var(--shadow-color);
-}
-.timeline-content h4 {
-  font-size: 16px;
-  margin-bottom: 4px;
-  color: var(--text-primary);
-}
-.timeline-content p {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
 
-/* ========== 游戏档案 ========== */
-.game-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  margin-bottom: 40px;
-}
-.total-time-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 32px;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-.total-time-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--shadow-color);
-  border-color: var(--accent-primary);
-}
-.total-time-label {
-  font-size: 16px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-}
-.total-time-number {
-  font-size: 48px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
 
-.pie-chart-container {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-.pie-chart-container:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--shadow-color);
-  border-color: var(--accent-primary);
-}
-.pie-chart {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: conic-gradient(var(--accent-primary) 0deg, var(--accent-primary) 220deg, var(--accent-secondary) 220deg, var(--accent-secondary) 360deg);
-  position: relative;
-  margin-bottom: 16px;
-  transform: scale(0) rotate(-90deg);
-  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.pie-chart-container.visible .pie-chart { transform: scale(1) rotate(0deg); }
-.pie-chart::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: var(--bg-secondary);
-}
-.pie-legend {
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
-}
-.legend-item { display: flex; align-items: center; gap: 6px; }
-.legend-color { width: 12px; height: 12px; border-radius: 3px; }
-.legend-color.cs { background: var(--accent-primary); }
-.legend-color.mc { background: var(--accent-secondary); }
+        .nav-tools {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
 
-.game-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-.game-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 24px;
-  transition: all 0.3s ease;
-}
-.game-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--shadow-color);
-  border-color: var(--accent-primary);
-}
-.game-card h3 {
-  font-size: 20px;
-  margin-bottom: 16px;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.game-info p {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
-.game-info strong { color: var(--text-primary); }
-.game-screenshot {
-  width: 100%;
-  height: 120px;
-  background: var(--bg-primary);
-  border: 1px dashed var(--border-color);
-  border-radius: 8px;
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  font-size: 13px;
-}
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            background: transparent;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
 
-/* ========== 机器人竞赛 ========== */
-.robot-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-.robot-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 28px;
-  transition: all 0.3s ease;
-}
-.robot-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--shadow-color);
-  border-color: var(--accent-primary);
-}
-.robot-card h3 {
-  font-size: 20px;
-  margin-bottom: 16px;
-  color: var(--accent-primary);
-}
-.robot-card ul { list-style: none; margin-bottom: 16px; }
-.robot-card li {
-  padding: 6px 0;
-  font-size: 14px;
-  color: var(--text-secondary);
-  padding-left: 20px;
-  position: relative;
-}
-.robot-card li::before {
-  content: '▸';
-  position: absolute;
-  left: 0;
-  color: var(--accent-primary);
-}
+        .icon-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
 
-/* ========== 开发作品 ========== */
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-}
-.project-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 24px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-.project-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--shadow-color);
-  border-color: var(--accent-primary);
-}
-.project-card.wip::before {
-  content: '开发中';
-  position: absolute;
-  top: 12px;
-  right: -30px;
-  background: var(--accent-primary);
-  color: white;
-  padding: 4px 30px;
-  font-size: 12px;
-  transform: rotate(45deg);
-}
-.project-type {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 6px;
-  background: rgba(124, 58, 237, 0.1);
-  color: var(--accent-primary);
-  font-size: 12px;
-  margin-bottom: 12px;
-}
-.project-card h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: var(--text-primary);
-}
-.project-tech {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-}
-.project-desc {
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 16px;
-}
-.project-link {
-  color: var(--accent-primary);
-  text-decoration: none;
-  font-size: 14px;
-  position: relative;
-}
-.project-link::after {
-  content: '→';
-  margin-left: 4px;
-  transition: margin-left 0.3s ease;
-}
-.project-link:hover::after { margin-left: 8px; }
+        /* 主内容容器 */
+        main {
+            position: relative;
+            z-index: 1;
+        }
 
-/* ========== 留言墙 ========== */
-.guestbook-container { max-width: 800px; margin: 0 auto; }
-.guestbook-form {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 32px;
-}
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.form-row input,
-.form-row textarea {
-  padding: 10px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.3s ease;
-  font-family: inherit;
-}
-.form-row textarea { resize: vertical; min-height: 80px; }
-.form-row input:focus,
-.form-row textarea:focus { border-color: var(--accent-primary); }
-.submit-btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.submit-btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px var(--shadow-color);
-}
-.submit-btn:active { transform: scale(0.98); }
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
 
-.messages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.message-item {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  transition: all 0.3s ease;
-}
-.message-item:hover { border-color: var(--accent-primary); }
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.message-name {
-  font-weight: 600;
-  color: var(--accent-primary);
-  font-size: 14px;
-}
-.message-time {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.message-content {
-  font-size: 14px;
-  color: var(--text-primary);
-  line-height: 1.6;
-}
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
 
-/* ========== 侧边悬浮目录 ========== */
-.side-nav {
-  position: fixed;
-  right: 24px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 999;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  opacity: 0;
-  visibility: hidden;
-  transition: all var(--transition);
-}
-.side-nav.show { opacity: 1; visibility: visible; }
-.side-nav-item {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--border-color);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-}
-.side-nav-item::before {
-  content: attr(data-label);
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  white-space: nowrap;
-  font-size: 12px;
-  color: var(--text-secondary);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  background: var(--bg-secondary);
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-}
-.side-nav-item:hover::before,
-.side-nav-item.active::before { opacity: 1; }
-.side-nav-item:hover,
-.side-nav-item.active {
-  background: var(--accent-primary);
-  transform: scale(1.3);
-}
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
 
-/* ========== 音乐播放器 ========== */
-.music-player {
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  z-index: 998;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 50px;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: all var(--transition);
-  box-shadow: 0 4px 12px var(--shadow-color);
-}
-.music-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: var(--accent-primary);
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-.music-btn:hover { transform: scale(1.1); }
-.music-info {
-  font-size: 13px;
-  color: var(--text-secondary);
-  max-width: 120px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+        /* 入场动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
 
-/* ========== 代码雨彩蛋 ========== */
-.code-rain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  overflow: hidden;
-}
-.code-rain.active { opacity: 0.7; }
-.code-column {
-  position: absolute;
-  top: -100%;
-  font-family: "Courier New", monospace;
-  font-size: 14px;
-  color: var(--accent-secondary);
-  writing-mode: vertical-rl;
-  animation: codeFall linear infinite;
-}
-@keyframes codeFall {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(200vh); }
-}
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-/* ========== 点击粒子特效 ========== */
-.click-particle {
-  position: fixed;
-  pointer-events: none;
-  border-radius: 50%;
-  background: var(--accent-secondary);
-  z-index: 9999;
-  animation: particleFade 0.8s ease-out forwards;
-}
-@keyframes particleFade {
-  0% { transform: scale(0); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
-}
+        /* Hero首屏 */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 24px;
+            position: relative;
+        }
 
-/* ========== 复制提示 ========== */
-.copy-tip {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  background: var(--accent-primary);
-  color: white;
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 1002;
-}
-.copy-tip.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+        .hero-content h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: title-float 3s ease-in-out infinite;
+        }
 
-/* ========== 页脚 ========== */
-.footer {
-  padding: 40px 24px;
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-secondary);
-}
-.footer-container {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-.footer-left,
-.footer-center,
-.footer-right {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-.footer-stats { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
-.footer-social { display: flex; gap: 12px; }
-.social-link {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-.social-link:hover {
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
-  transform: translateY(-2px);
-}
+        @keyframes title-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
 
-/* ========== 响应式适配 ========== */
-@media (max-width: 968px) {
-  .about-content,
-  .game-stats,
-  .game-cards,
-  .robot-cards { grid-template-columns: 1fr; }
-  
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    flex-direction: column;
-    background: var(--bg-secondary);
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border-color);
-    gap: 16px;
-  }
-  .nav-links.open { display: flex; }
-  .menu-toggle { display: flex; align-items: center; justify-content: center; }
-  
-  .side-nav { display: none; }
-  .hero-title { font-size: 40px; }
-  .section { padding: 60px 20px; }
-  .form-row { grid-template-columns: 1fr; }
-  .footer-container { flex-direction: column; text-align: center; }
-  .music-player { max-width: calc(100vw - 48px); }
-}
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            min-height: 28px;
+        }
 
-@media (max-width: 576px) {
-  .hero-title { font-size: 32px; }
-  .hero-subtitle { font-size: 16px; }
-  .total-time-number { font-size: 36px; }
-  .music-player { bottom: 16px; left: 16px; }
-  .radar-svg { width: 240px; height: 240px; }
-}
-</style>
+        .hero-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 20px auto 0;
+            line-height: 1.8;
+        }
+
+        .hero-tags {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .hero-tag {
+            padding: 6px 16px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .hero-tag:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-secondary);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* 关于我 */
+        #about {
+            background: var(--bg-secondary);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        /* 技能进度条 */
+        .skill-item {
+            margin-bottom: 18px;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .skill-name {
+            color: var(--text);
+        }
+
+        .skill-percent {
+            color: var(--primary);
+        }
+
+        .skill-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .skill-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 3px;
+            width: 0;
+            transition: width 1.2s ease;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 32px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 0 4px var(--bg);
+        }
+
+        .timeline-year {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 精选项目轮播 */
+        .featured-slider {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 60px;
+        }
+
+        .featured-slide {
+            display: none;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.08), rgba(162, 155, 254, 0.05));
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .featured-slide.active {
+            display: block;
+            animation: fade-in 0.5s ease;
+        }
+
+        .featured-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+
+        .featured-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .featured-desc {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 20px;
+        }
+
+        .featured-tech {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .featured-tech span {
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .slider-dots {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slider-dot.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* 项目卡片网格 */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .project-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-light);
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-category {
+            font-size: 12px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .project-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .project-tech {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .project-tech span {
+            font-size: 12px;
+            padding: 3px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+
+        /* 游戏与机器人模块 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .info-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(108, 92, 231, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-content p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.7;
+        }
+
+        .card-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .card-content li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .card-content li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        /* 荣誉奖项 */
+        .awards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .award-item {
+            padding: 20px;
+            border-left: 3px solid var(--primary);
+            background: var(--bg-secondary);
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .award-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow);
+        }
+
+        .award-year {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .award-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .award-level {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 友情链接 */
+        #links {
+            background: var(--bg-secondary);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .link-card {
+            padding: 16px 20px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .link-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            color: var(--primary);
+        }
+
+        .link-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* 页脚 */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 侧边工具栏 */
+        .side-tools {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 999;
+        }
+
+        .back-top {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .back-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-top:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .back-top svg {
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .progress-ring .bg {
+            stroke: var(--border);
+        }
+
+        .progress-ring .fill {
+            stroke: var(--primary);
+            stroke-dasharray: 125.6;
+            stroke-dashoffset: 125.6;
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content h1 {
+                font-size: 36px;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .section {
+                padding: 60px 20px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .featured-slide {
+                padding: 40px 24px;
+            }
+
+            .featured-title {
+                font-size: 22px;
+            }
+        }
+
+        /* 极简模式关闭动效 */
+        [data-mode="simple"] * {
+            animation: none !important;
+            transition: none !important;
+        }
+    </style>
 </head>
 <body>
-<!-- 复制成功提示 -->
-<div class="copy-tip" id="copyTip">链接已复制到剪贴板</div>
+    <!-- 滚动进度条 -->
+    <div id="scroll-progress"></div>
 
-<!-- 滚动进度条 -->
-<div class="scroll-progress" id="scrollProgress"></div>
+    <!-- 流星背景 -->
+    <div class="meteor-container" id="meteorContainer"></div>
 
-<!-- 背景装饰层 -->
-<div class="bg-grid" id="bgGrid"></div>
-<div class="bg-lines">
-  <div class="bg-line"></div>
-  <div class="bg-line"></div>
-  <div class="bg-line"></div>
-  <div class="bg-line"></div>
-</div>
-<div class="bg-stars" id="starsContainer"></div>
-<div class="meteor-container" id="meteorContainer"></div>
-
-<!-- 代码雨容器 -->
-<div class="code-rain" id="codeRain"></div>
-
-<!-- 顶部导航栏 -->
-<nav class="navbar" id="navbar">
-  <div class="nav-container">
-    <div class="nav-logo" id="navLogo">失眠夜</div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#home" class="nav-link active">首页</a></li>
-      <li><a href="#about" class="nav-link">关于我</a></li>
-      <li><a href="#timeline" class="nav-link">成长轨迹</a></li>
-      <li><a href="#games" class="nav-link">游戏档案</a></li>
-      <li><a href="#robot" class="nav-link">机器人竞赛</a></li>
-      <li><a href="#projects" class="nav-link">开发作品</a></li>
-      <li><a href="#awards" class="nav-link">荣誉奖项</a></li>
-      <li><a href="#guestbook" class="nav-link">留言墙</a></li>
-    </ul>
-    <div class="nav-actions">
-      <!-- 一键复制链接 -->
-      <button class="icon-btn" id="copyBtn" title="复制页面链接">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-        </svg>
-      </button>
-      <!-- 全屏模式 -->
-      <button class="icon-btn" id="fullscreenBtn" title="全屏模式">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-        </svg>
-      </button>
-      <!-- 主题切换 -->
-      <button class="icon-btn" id="themeBtn" title="切换亮暗主题">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-      </button>
-      <!-- 回到顶部 -->
-      <button class="icon-btn back-top-btn" id="backTopBtn" title="回到顶部">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
-      </button>
-      <!-- 移动端菜单 -->
-      <button class="menu-toggle" id="menuToggle">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-  </div>
-</nav>
-
-<!-- 侧边悬浮目录 -->
-<div class="side-nav" id="sideNav">
-  <div class="side-nav-item active" data-target="#home" data-label="首页"></div>
-  <div class="side-nav-item" data-target="#about" data-label="关于我"></div>
-  <div class="side-nav-item" data-target="#timeline" data-label="成长轨迹"></div>
-  <div class="side-nav-item" data-target="#games" data-label="游戏档案"></div>
-  <div class="side-nav-item" data-target="#robot" data-label="机器人竞赛"></div>
-  <div class="side-nav-item" data-target="#projects" data-label="开发作品"></div>
-  <div class="side-nav-item" data-target="#awards" data-label="荣誉奖项"></div>
-  <div class="side-nav-item" data-target="#guestbook" data-label="留言墙"></div>
-</div>
-
-<!-- 音乐播放器 -->
-<div class="music-player">
-  <button class="music-btn" id="musicBtn">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="5 3 19 12 5 21 5 3"></polygon>
-    </svg>
-  </button>
-  <div class="music-info">深夜纯音 · 待添加</div>
-</div>
-
-<!-- Hero首屏 -->
-<section class="hero" id="home">
-  <div class="hero-glow"></div>
-  <h1 class="hero-title">失眠夜 · 个人空间</h1>
-  <p class="hero-subtitle">初三学生 | 编程爱好者 | 游戏玩家</p>
-  <div class="hero-slogan">
-    <span class="typewriter" id="sloganText">在代码里构建逻辑，在方块里搭建世界，在赛场里验证热爱。</span>
-  </div>
-  <div class="hero-tags">
-    <span class="tag">游戏竞技</span>
-    <span class="tag">机器人工程</span>
-    <span class="tag">工具开发</span>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- 关于我 -->
-<section class="section" id="about">
-  <h2 class="section-title fade-in-up">关于我</h2>
-  <div class="about-content">
-    <div class="about-text fade-in-up">
-      <p>目前是一名在读初三学生，热衷于把想法落地为可运行的实体与程序。享受从0到1的搭建过程，既沉迷游戏里的战术与创造，也热爱现实中的机械与代码，习惯用技术解决身边的小问题。</p>
-      <div class="skill-tags">
-        <span class="skill-tag" data-level="熟练">C++</span>
-        <span class="skill-tag" data-level="熟练">Python</span>
-        <span class="skill-tag" data-level="熟练">HTML/CSS/JS</span>
-        <span class="skill-tag" data-level="熟练">机械搭建</span>
-        <span class="skill-tag" data-level="掌握">电路调试</span>
-        <span class="skill-tag" data-level="入门">算法入门</span>
-        <span class="skill-tag" data-level="熟练">工具开发</span>
-        <span class="skill-tag" data-level="掌握">红石设计</span>
-      </div>
-    </div>
-    <div class="radar-container fade-in-up" id="radarContainer">
-      <svg class="radar-svg" viewBox="0 0 300 300">
-        <!-- 雷达网格 -->
-        <polygon points="150,30 260,90 260,210 150,270 40,210 40,90" fill="none" stroke="var(--border-color)" stroke-width="1"/>
-        <polygon points="150,70 220,110 220,190 150,230 80,190 80,110" fill="none" stroke="var(--border-color)" stroke-width="1"/>
-        <polygon points="150,110 180,130 180,170 150,190 120,170 120,130" fill="none" stroke="var(--border-color)" stroke-width="1"/>
-        <!-- 轴线 -->
-        <line x1="150" y1="30" x2="150" y2="270" stroke="var(--border-color)" stroke-width="1"/>
-        <line x1="40" y1="90" x2="260" y2="210" stroke="var(--border-color)" stroke-width="1"/>
-        <line x1="40" y1="210" x2="260" y2="90" stroke="var(--border-color)" stroke-width="1"/>
-        <!-- 技能数据多边形 -->
-        <polygon class="radar-polygon" points="150,50 250,100 230,200 150,250 60,190 70,100"/>
-        <!-- 维度标签 -->
-        <text x="150" y="20" text-anchor="middle" fill="var(--text-secondary)" font-size="12">编程开发</text>
-        <text x="270" y="95" text-anchor="start" fill="var(--text-secondary)" font-size="12">机械搭建</text>
-        <text x="270" y="215" text-anchor="start" fill="var(--text-secondary)" font-size="12">电路调试</text>
-        <text x="150" y="285" text-anchor="middle" fill="var(--text-secondary)" font-size="12">游戏竞技</text>
-        <text x="30" y="215" text-anchor="end" fill="var(--text-secondary)" font-size="12">红石设计</text>
-        <text x="30" y="95" text-anchor="end" fill="var(--text-secondary)" font-size="12">工具设计</text>
-      </svg>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- 成长轨迹 -->
-<section class="section" id="timeline">
-  <h2 class="section-title fade-in-up">技术成长时间线</h2>
-  <div class="timeline">
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2022 · 起点</div>
-      <div class="timeline-content">
-        <h4>首次接触VEX机器人</h4>
-        <p>开启机械结构与C++编程学习，踏入机器人工程领域。</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2023 · 初探</div>
-      <div class="timeline-content">
-        <h4>完成第一个Python小工具</h4>
-        <p>独立编写自动化脚本，体验从想法到落地的完整流程。</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2023 · 竞技</div>
-      <div class="timeline-content">
-        <h4>入坑CS竞技</h4>
-        <p>专注枪法与战术打磨，享受回合制博弈的团队配合乐趣。</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2024 · 落地</div>
-      <div class="timeline-content">
-        <h4>开发兴华中学广播站系统</h4>
-        <p>独立设计开发并投入校园实际使用，解决排班与播放管理问题。</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2024 · 进阶</div>
-      <div class="timeline-content">
-        <h4>接触RoboMaster机甲赛事</h4>
-        <p>深入学习工程控制与视觉识别，拓展机器人技术边界。</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2025 · 效率</div>
-      <div class="timeline-content">
-        <h4>开发自助记账系统</h4>
-        <p>轻量化单文件本地工具，开箱即用，满足日常收支管理需求。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- 游戏档案 -->
-<section class="section" id="games">
-  <h2 class="section-title fade-in-up">游戏爱好</h2>
-  <div class="game-stats">
-    <div class="total-time-card fade-in-up">
-      <div class="total-time-label">游戏总时长</div>
-      <div class="total-time-number" data-target="2025.7">0</div>
-      <div style="font-size:14px; color: var(--text-secondary); margin-top:4px;">小时</div>
-    </div>
-    <div class="pie-chart-container fade-in-up" id="pieContainer">
-      <div class="pie-chart"></div>
-      <div class="pie-legend">
-        <div class="legend-item">
-          <span class="legend-color cs"></span>
-          <span>CS 系列</span>
+    <!-- 导航栏 -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">失眠夜</div>
+            <ul class="nav-links">
+                <li><a href="#hero" class="active">首页</a></li>
+                <li><a href="#about">关于我</a></li>
+                <li><a href="#timeline">成长线</a></li>
+                <li><a href="#projects">项目</a></li>
+                <li><a href="#hobby">爱好</a></li>
+                <li><a href="#awards">荣誉</a></li>
+            </ul>
+            <div class="nav-tools">
+                <button class="icon-btn" id="themeToggle" title="切换主题">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="simpleMode" title="极简模式">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </button>
+            </div>
         </div>
-        <div class="legend-item">
-          <span class="legend-color mc"></span>
-          <span>我的世界</span>
+    </nav>
+
+    <main>
+        <!-- 首屏Hero -->
+        <section id="hero" class="section">
+            <div class="hero-content">
+                <h1>失眠夜 · 个人空间</h1>
+                <div class="hero-subtitle" id="typewriter"></div>
+                <p class="hero-desc">在代码里构建逻辑，在方块里搭建世界，在赛场里验证热爱。</p>
+                <div class="hero-tags">
+                    <span class="hero-tag">初三学生</span>
+                    <span class="hero-tag">编程爱好者</span>
+                    <span class="hero-tag">游戏玩家</span>
+                    <span class="hero-tag">机器人工程</span>
+                </div>
+            </div>
+            <div class="scroll-down">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- 关于我 -->
+        <section id="about" class="section fade-in">
+            <h2 class="section-title">关于我</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>目前是一名在读初三学生，热衷于把想法落地为可运行的实体与程序。享受从0到1的搭建过程，既沉迷游戏里的战术与创造，也热爱现实中的机械与代码，习惯用技术解决身边的小问题。</p>
+                    <p>擅长C++、Python、前端开发，同时熟悉机械搭建与电路调试。在机器人竞赛、校园工具开发、游戏竞技中不断打磨技术，相信每一行代码、每一处结构都有其存在的意义。</p>
+                </div>
+                <div class="skills">
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">C++ 程序开发</span>
+                            <span class="skill-percent">85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" data-percent="85"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">Python 工具开发</span>
+                            <span class="skill-percent">80%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" data-percent="80"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">HTML / CSS / JS</span>
+                            <span class="skill-percent">75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" data-percent="75"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">机械结构设计</span>
+                            <span class="skill-percent">70%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" data-percent="70"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">红石电路设计</span>
+                            <span class="skill-percent">78%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" data-percent="78"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 成长时间线 -->
+        <section id="timeline" class="section fade-in">
+            <h2 class="section-title">技术成长时间线</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2022 · 起点</div>
+                    <div class="timeline-title">首次接触VEX机器人</div>
+                    <div class="timeline-desc">开启机械结构与C++编程学习，踏入机器人工程领域。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023 · 初探</div>
+                    <div class="timeline-title">完成第一个Python小工具</div>
+                    <div class="timeline-desc">独立编写自动化脚本，体验从想法到落地的完整流程。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023 · 竞技</div>
+                    <div class="timeline-title">入坑CS竞技</div>
+                    <div class="timeline-desc">专注枪法与战术打磨，享受回合制博弈的团队配合乐趣。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2024 · 落地</div>
+                    <div class="timeline-title">开发兴华中学广播站系统</div>
+                    <div class="timeline-desc">独立设计开发并投入校园实际使用，解决排班与播放管理问题。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2024 · 进阶</div>
+                    <div class="timeline-title">接触RoboMaster机甲赛事</div>
+                    <div class="timeline-desc">深入学习工程控制与视觉识别，拓展机器人技术边界。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2025 · 效率</div>
+                    <div class="timeline-title">开发自助记账系统</div>
+                    <div class="timeline-desc">轻量化单文件本地工具，开箱即用，满足日常收支管理需求。</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 项目作品 -->
+        <section id="projects" class="section fade-in">
+            <h2 class="section-title">个人开发项目</h2>
+            
+            <!-- 精选轮播 -->
+            <div class="featured-slider">
+                <div class="featured-slide active">
+                    <span class="featured-tag">校园落地项目</span>
+                    <h3 class="featured-title">兴华中学广播站系统</h3>
+                    <p class="featured-desc">针对校园广播站排班混乱、播放流程不规范的问题开发，支持广播排班管理、播放日程控制、站点信息维护，已投入实际场景使用。</p>
+                    <div class="featured-tech">
+                        <span>原生开发</span>
+                        <span>本地部署</span>
+                        <span>校园场景</span>
+                    </div>
+                </div>
+                <div class="featured-slide">
+                    <span class="featured-tag">效率工具</span>
+                    <h3 class="featured-title">自助记账系统</h3>
+                    <p class="featured-desc">轻量化单文件工具，无需安装开箱即用，支持收支记录、分类统计、数据可视化、本地数据存储，满足日常收支管理需求。</p>
+                    <div class="featured-tech">
+                        <span>单文件 exe</span>
+                        <span>本地存储</span>
+                        <span>数据可视化</span>
+                    </div>
+                </div>
+                <div class="featured-slide">
+                    <span class="featured-tag">规划中</span>
+                    <h3 class="featured-title">创意工具 · 敬请期待</h3>
+                    <p class="featured-desc">新的效率工具正在构思与开发中，持续打磨功能与体验，后续将更新上线。</p>
+                    <div class="featured-tech">
+                        <span>开发中</span>
+                        <span>敬请期待</span>
+                    </div>
+                </div>
+                <div class="slider-dots">
+                    <div class="slider-dot active" data-index="0"></div>
+                    <div class="slider-dot" data-index="1"></div>
+                    <div class="slider-dot" data-index="2"></div>
+                </div>
+            </div>
+
+            <!-- 项目网格 -->
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-category">校园管理工具</div>
+                    <h3 class="project-title">兴华中学广播站系统</h3>
+                    <p class="project-desc">针对校园广播站排班混乱、播放流程不规范的问题开发，支持广播排班管理、播放日程控制、站点信息维护。</p>
+                    <div class="project-tech">
+                        <span>原生开发</span>
+                        <span>本地部署</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-category">本地效率工具</div>
+                    <h3 class="project-title">自助记账系统</h3>
+                    <p class="project-desc">轻量化单文件工具，无需安装开箱即用，支持收支记录、分类统计、数据可视化、本地数据存储。</p>
+                    <div class="project-tech">
+                        <span>单文件 exe</span>
+                        <span>本地存储</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-category">创意工具</div>
+                    <h3 class="project-title">待开发项目 · 敬请期待</h3>
+                    <p class="project-desc">新的效率工具正在构思与开发中，持续打磨功能与体验，后续将更新上线。</p>
+                    <div class="project-tech">
+                        <span>规划中</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 爱好专区 -->
+        <section id="hobby" class="section fade-in">
+            <h2 class="section-title">机器人与游戏</h2>
+            <div class="cards-grid">
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon">🤖</div>
+                        <h3 class="card-title">VEX V5 机器人</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li>机械结构搭建、C++程序编写、现场调试优化</li>
+                            <li>参与多项校级、市级VEX赛事</li>
+                            <li>具备赛场应急调试与战术调整能力</li>
+                            <li>核心能力：结构设计、程序逻辑、临场排错、团队配合</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚙️</div>
+                        <h3 class="card-title">机甲大师 RoboMaster</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul>
+                            <li>机甲工程结构、自动化控制、视觉识别入门</li>
+                            <li>接触机甲赛事体系，学习工程实现与团队协作</li>
+                            <li>持续深耕机器人控制相关技术</li>
+                            <li>专注工程落地与多模块协同开发</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">CS 系列</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>平台：完美世界竞技平台</p>
+                        <p>段位：普通 A</p>
+                        <p>定位：擅长步枪位，专注竞技模式，打磨枪法与团队战术配合，享受回合制博弈的乐趣。</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="card-header">
+                        <div class="card-icon">⛏️</div>
+                        <h3 class="card-title">我的世界</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>方向：自由建造、红石电路、生存整合包</p>
+                        <p>偏好：喜欢用红石搭建自动化装置，享受从零搭建完整世界的成就感，偏好技术向玩法。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 荣誉奖项 -->
+        <section id="awards" class="section fade-in">
+            <h2 class="section-title">荣誉与奖项</h2>
+            <div class="awards-grid">
+                <div class="award-item">
+                    <div class="award-year">2025 · 机器人竞赛</div>
+                    <div class="award-name">市级VEX机器人挑战赛</div>
+                    <div class="award-level">二等奖</div>
+                </div>
+                <div class="award-item">
+                    <div class="award-year">2024 · 编程开发</div>
+                    <div class="award-name">青少年科技创新大赛</div>
+                    <div class="award-level">编程类三等奖</div>
+                </div>
+                <div class="award-item">
+                    <div class="award-year">2024 · 校园荣誉</div>
+                    <div class="award-name">校园科技创新之星</div>
+                    <div class="award-level">校级荣誉称号</div>
+                </div>
+                <div class="award-item">
+                    <div class="award-year">2023 · 机器人竞赛</div>
+                    <div class="award-name">校级VEX机器人联赛</div>
+                    <div class="award-level">一等奖</div>
+                </div>
+                <div class="award-item">
+                    <div class="award-year">2023 · 编程开发</div>
+                    <div class="award-name">信息学奥赛普及组</div>
+                    <div class="award-level">市级二等奖</div>
+                </div>
+                <div class="award-item">
+                    <div class="award-year">2022 · 校园荣誉</div>
+                    <div class="award-name">优秀学生干部</div>
+                    <div class="award-level">校级荣誉</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 友情链接 -->
+        <section id="links" class="section fade-in">
+            <h2 class="section-title">友情链接</h2>
+            <div class="links-grid">
+                <a href="#" class="link-card">
+                    <div class="link-avatar">G</div>
+                    <div class="link-info">
+                        <div class="link-name">GitHub</div>
+                        <div class="link-desc">代码仓库</div>
+                    </div>
+                </a>
+                <a href="#" class="link-card">
+                    <div class="link-avatar">B</div>
+                    <div class="link-info">
+                        <div class="link-name">哔哩哔哩</div>
+                        <div class="link-desc">视频主页</div>
+                    </div>
+                </a>
+                <a href="#" class="link-card">
+                    <div class="link-avatar">V</div>
+                    <div class="link-info">
+                        <div class="link-name">VEX 官网</div>
+                        <div class="link-desc">机器人赛事</div>
+                    </div>
+                </a>
+                <a href="#" class="link-card">
+                    <div class="link-avatar">R</div>
+                    <div class="link-info">
+                        <div class="link-name">RoboMaster</div>
+                        <div class="link-desc">机甲大师</div>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="runDays">0</div>
+                    <div class="stat-label">本站运行天数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">6+</div>
+                    <div class="stat-label">开发项目</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">年编程经验</div>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                © 2022-2025 失眠夜 · 用代码与热爱构建
+            </div>
         </div>
-      </div>
+    </footer>
+
+    <!-- 侧边工具栏 -->
+    <div class="side-tools">
+        <button class="back-top" id="backTop" title="回到顶部">
+            <svg class="progress-ring" viewBox="0 0 44 44">
+                <circle class="bg" cx="22" cy="22" r="20"/>
+                <circle class="fill" cx="22" cy="22" r="20"/>
+            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="18 15 12 9 6 15"/>
+            </svg>
+        </button>
     </div>
-  </div>
-  <div class="game-cards">
-    <div class="game-card fade-in-up">
-      <h3>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2">
-          <rect x="2" y="6" width="20" height="12" rx="2"></rect>
-        </svg>
-        CS 系列
-      </h3>
-      <div class="game-info">
-        <p><strong>平台：</strong>完美世界竞技平台</p>
-        <p><strong>段位：</strong>普通 A</p>
-        <p><strong>定位：</strong>擅长步枪位，专注竞技模式，打磨枪法与团队战术配合，享受回合制博弈的乐趣。</p>
-      </div>
-      <div class="game-screenshot">游戏截图占位（可替换为图片）</div>
-    </div>
-    <div class="game-card fade-in-up">
-      <h3>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-          <line x1="3" y1="9" x2="21" y2="9"></line>
-          <line x1="9" y1="21" x2="9" y2="9"></line>
-        </svg>
-        我的世界
-      </h3>
-      <div class="game-info">
-        <p><strong>方向：</strong>自由建造、红石电路、生存整合包</p>
-        <p><strong>偏好：</strong>喜欢用红石搭建自动化装置，享受从零搭建完整世界的成就感，偏好技术向玩法。</p>
-      </div>
-      <div class="game-screenshot">游戏截图占位（可替换为图片）</div>
-    </div>
-  </div>
-</section>
 
-<div class="divider"></div>
+    <script>
+        // ========== 流星动画修复 ==========
+        function createMeteors() {
+            const container = document.getElementById('meteorContainer');
+            const meteorCount = 10; // 固定数量，避免性能问题
+            
+            for (let i = 0; i < meteorCount; i++) {
+                const meteor = document.createElement('div');
+                meteor.className = 'meteor';
+                
+                // 随机参数
+                const delay = Math.random() * 8; // 0-8秒随机延迟
+                const duration = 3 + Math.random() * 4; // 3-7秒持续时间
+                const top = Math.random() * 40; // 顶部随机位置
+                const right = Math.random() * 60; // 右侧随机位置
+                
+                meteor.style.top = top + '%';
+                meteor.style.right = right + '%';
+                meteor.style.animationDelay = delay + 's';
+                meteor.style.animationDuration = duration + 's';
+                
+                container.appendChild(meteor);
+            }
+        }
+        createMeteors();
 
-<!-- 机器人竞赛 -->
-<section class="section" id="robot">
-  <h2 class="section-title fade-in-up">机器人与工程</h2>
-  <div class="robot-cards">
-    <div class="robot-card fade-in-up">
-      <h3>VEX V5 机器人</h3>
-      <ul>
-        <li>机械结构搭建、C++程序编写、现场调试优化</li>
-        <li>参与多项校级、市级VEX赛事</li>
-        <li>具备赛场应急调试与战术调整能力</li>
-        <li>核心能力：结构设计、程序逻辑、临场排错、团队配合</li>
-      </ul>
-    </div>
-    <div class="robot-card fade-in-up">
-      <h3>机甲大师 RoboMaster</h3>
-      <ul>
-        <li>机甲工程结构、自动化控制、视觉识别入门</li>
-        <li>接触机甲赛事体系，学习工程实现与团队协作</li>
-        <li>持续深耕机器人控制相关技术</li>
-        <li>专注工程落地与多模块协同开发</li>
-      </ul>
-    </div>
-  </div>
-</section>
+        // ========== 打字机效果 ==========
+        function typeWriter() {
+            const texts = ['初三学生 | 编程爱好者 | 游戏玩家', '在代码里构建逻辑', '在方块里搭建世界', '在赛场里验证热爱'];
+            const element = document.getElementById('typewriter');
+            let textIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            
+            function type() {
+                const currentText = texts[textIndex];
+                
+                if (isDeleting) {
+                    element.textContent = currentText.substring(0, charIndex - 1);
+                    charIndex--;
+                } else {
+                    element.textContent = currentText.substring(0, charIndex + 1);
+                    charIndex++;
+                }
+                
+                let typeSpeed = isDeleting ? 50 : 100;
+                
+                if (!isDeleting && charIndex === currentText.length) {
+                    typeSpeed = 2000;
+                    isDeleting = true;
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    textIndex = (textIndex + 1) % texts.length;
+                    typeSpeed = 500;
+                }
+                
+                setTimeout(type, typeSpeed);
+            }
+            type();
+        }
+        typeWriter();
 
-<div class="divider"></div>
+        // ========== 导航栏滚动效果 ==========
+        const navbar = document.getElementById('navbar');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const sections = document.querySelectorAll('section[id]');
+        
+        window.addEventListener('scroll', () => {
+            // 导航栏样式
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            // 滚动进度条
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('scroll-progress').style.width = progress + '%';
+            
+            // 回到顶部按钮显示
+            const backTop = document.getElementById('backTop');
+            if (scrollTop > 300) {
+                backTop.classList.add('visible');
+            } else {
+                backTop.classList.remove('visible');
+            }
+            
+            // 环形进度
+            const ring = document.querySelector('.progress-ring .fill');
+            const circumference = 2 * Math.PI * 20;
+            const offset = circumference - (progress / 100) * circumference;
+            ring.style.strokeDashoffset = offset;
+            
+            // 导航高亮
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
 
-<!-- 开发作品 -->
-<section class="section" id="projects">
-  <h2 class="section-title fade-in-up">个人开发项目</h2>
-  <div class="project-grid">
-    <div class="project-card fade-in-up">
-      <span class="project-type">校园管理工具</span>
-      <h3>兴华中学广播站系统</h3>
-      <div class="project-tech">技术栈：原生开发 · 本地部署</div>
-      <p class="project-desc">针对校园广播站排班混乱、播放流程不规范的问题开发，支持广播排班管理、播放日程控制、站点信息维护，已投入实际场景使用。</p>
-      <a href="#" class="project-link">查看项目</a>
-    </div>
-    <div class="project-card fade-in-up">
-      <span class="project-type">本地效率工具</span>
-      <h3>自助记账系统</h3>
-      <div class="project-tech">技术栈：单文件 exe · 本地存储</div>
-      <p class="project-desc">轻量化单文件工具，无需安装开箱即用，支持收支记录、分类统计、数据可视化、本地数据存储，满足日常收支管理需求。</p>
-      <a href="#" class="project-link">查看项目</a>
-    </div>
-    <div class="project-card fade-in-up wip">
-      <span class="project-type">创意工具</span>
-      <h3>待开发项目 · 敬请期待</h3>
-      <div class="project-tech">技术栈：规划中</div>
-      <p class="project-desc">新的效率工具正在构思与开发中，持续打磨功能与体验，后续将更新上线。</p>
-      <span class="project-link" style="opacity: 0.5; pointer-events: none;">开发中...</span>
-    </div>
-  </div>
-</section>
+        // ========== 回到顶部 ==========
+        document.getElementById('backTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
 
-<div class="divider"></div>
+        // ========== 入场动画 ==========
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // 技能条动画
+                    const skillFills = entry.target.querySelectorAll('.skill-fill');
+                    skillFills.forEach(fill => {
+                        const percent = fill.getAttribute('data-percent');
+                        setTimeout(() => {
+                            fill.style.width = percent + '%';
+                        }, 200);
+                    });
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        fadeElements.forEach(el => observer.observe(el));
 
-<!-- 荣誉奖项 -->
-<section class="section" id="awards">
-  <h2 class="section-title fade-in-up">荣誉与奖项</h2>
-  <div class="timeline awards-timeline">
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2025 · 机器人竞赛</div>
-      <div class="timeline-content">
-        <h4>市级VEX机器人挑战赛</h4>
-        <p>二等奖</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2024 · 编程开发</div>
-      <div class="timeline-content">
-        <h4>青少年科技创新大赛</h4>
-        <p>编程类三等奖</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2024 · 校园荣誉</div>
-      <div class="timeline-content">
-        <h4>校园科技创新之星</h4>
-        <p>校级荣誉称号</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2023 · 机器人竞赛</div>
-      <div class="timeline-content">
-        <h4>校级VEX机器人联赛</h4>
-        <p>一等奖</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2023 · 编程开发</div>
-      <div class="timeline-content">
-        <h4>信息学奥赛普及组</h4>
-        <p>市级二等奖</p>
-      </div>
-    </div>
-    <div class="timeline-item fade-in-up">
-      <div class="timeline-dot"></div>
-      <div class="timeline-date">2022 · 校园荣誉</div>
-      <div class="timeline-content">
-        <h4>优秀学生干部</h4>
-        <p>校级荣誉</p>
-      </div>
-    </div>
-  </div>
-</section>
+        // ========== 轮播图 ==========
+        const slides = document.querySelectorAll('.featured-slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+        
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentSlide = index;
+        }
+        
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.getAttribute('data-index'));
+                showSlide(index);
+            });
+        });
+        
+        // 自动轮播
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 5000);
 
-<div class="divider"></div>
+        // ========== 主题切换 ==========
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // 读取本地主题
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
 
-<!-- 留言墙 -->
-<section class="section" id="guestbook">
-  <h2 class="section-title fade-in-up">留言墙</h2>
-  <div class="guestbook-container">
-    <form class="guestbook-form fade-in-up" id="messageForm">
-      <div class="form-row">
-        <input type="text" id="msgName" placeholder="你的昵称" required maxlength="20">
-        <textarea id="msgContent" placeholder="写下你想说的话..." required maxlength="200"></textarea>
-      </div>
-      <button type="submit" class="submit-btn">提交留言</button>
-    </form>
-    <div class="messages-list" id="messagesList">
-      <!-- 留言动态渲染 -->
-    </div>
-  </div>
-</section>
+        // ========== 极简模式 ==========
+        const simpleModeBtn = document.getElementById('simpleMode');
+        simpleModeBtn.addEventListener('click', () => {
+            const currentMode = document.documentElement.getAttribute('data-mode');
+            if (currentMode === 'simple') {
+                document.documentElement.setAttribute('data-mode', 'normal');
+                localStorage.setItem('mode', 'normal');
+            } else {
+                document.documentElement.setAttribute('data-mode', 'simple');
+                localStorage.setItem('mode', 'simple');
+            }
+        });
+        
+        const savedMode = localStorage.getItem('mode') || 'normal';
+        document.documentElement.setAttribute('data-mode', savedMode);
 
-<!-- 页脚 -->
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-left">© 2026 失眠夜 · 个人空间</div>
-    <div class="footer-center footer-stats">
-      <span id="siteRunTime">本站已平稳运行：计算中...</span>
-      <span id="stayTime">本次停留：0分0秒</span>
-    </div>
-    <div class="footer-right">
-      <div class="footer-social">
-        <a href="#" class="social-link" title="GitHub">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-        </a>
-        <a href="mailto:example@mail.com" class="social-link" title="邮箱">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-            <polyline points="22,6 12,13 2,6"></polyline>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script>
-// ==================== 初始化背景装饰 ====================
-// 生成随机漂浮星点
-function createStars() {
-  const container = document.getElementById('starsContainer');
-  for (let i = 0; i < 20; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = Math.random() * 4 + 2;
-    star.style.width = size + 'px';
-    star.style.height = size + 'px';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.animationDuration = (Math.random() * 10 + 10) + 's';
-    star.style.animationDelay = Math.random() * 5 + 's';
-    container.appendChild(star);
-  }
-}
-
-// 生成流星（已修复：统一从右上向左下划过，位置随机错开）
-function createMeteors() {
-  const container = document.getElementById('meteorContainer');
-  const meteorCount = 8;
-  for (let i = 0; i < meteorCount; i++) {
-    const meteor = document.createElement('div');
-    meteor.className = 'meteor';
-    // 随机初始位置：x轴60%~120%（右侧区域），y轴-10%~40%（上方区域）
-    const startX = Math.random() * 60 + 60 + '%';
-    const startY = Math.random() * 50 - 10 + '%';
-    meteor.style.setProperty('--x-start', startX);
-    meteor.style.setProperty('--y-start', startY);
-    // 随机动画时长：3.5~6.5秒
-    const duration = Math.random() * 3 + 3.5;
-    meteor.style.animationDuration = duration + 's';
-    // 随机延迟：0~10秒，错开出现时间
-    meteor.style.animationDelay = Math.random() * 10 + 's';
-    container.appendChild(meteor);
-  }
-}
-
-// ==================== 亮暗主题切换 ====================
-const themeBtn = document.getElementById('themeBtn');
-const body = document.body;
-
-// 读取本地主题偏好
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'dark') {
-  body.classList.add('dark');
-  updateThemeIcon(true);
-}
-
-function updateThemeIcon(isDark) {
-  const icon = themeBtn.querySelector('svg');
-  icon.innerHTML = isDark 
-    ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
-    : `<circle cx="12" cy="12" r="5"></circle>
-       <line x1="12" y1="1" x2="12" y2="3"></line>
-       <line x1="12" y1="21" x2="12" y2="23"></line>
-       <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-       <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-       <line x1="1" y1="12" x2="3" y2="12"></line>
-       <line x1="21" y1="12" x2="23" y2="12"></line>
-       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
-}
-
-themeBtn.addEventListener('click', () => {
-  body.classList.remove('night-mode'); // 切换主题时退出深夜模式
-  body.classList.toggle('dark');
-  const isDark = body.classList.contains('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  updateThemeIcon(isDark);
-});
-
-// ==================== 深夜模式彩蛋 ====================
-const navLogo = document.getElementById('navLogo');
-let logoClickCount = 0;
-let logoClickTimer = null;
-
-// 深夜模式随机slogan
-const nightSlogans = [
-  '夜色温柔，代码不眠，星光与你都在。',
-  '失眠的夜里，每一行代码都在发光。',
-  '星光不问赶路人，时光不负有心人。',
-  '在深夜里构建世界，在黎明前拥抱热爱。',
-  '键盘敲击的节奏，是深夜独有的旋律。'
-];
-
-navLogo.addEventListener('click', () => {
-  logoClickCount++;
-  clearTimeout(logoClickTimer);
-  
-  if (logoClickCount >= 2) {
-    body.classList.toggle('night-mode');
-    logoClickCount = 0;
-    
-    // 切换slogan并重播打字机动画
-    const slogan = document.getElementById('sloganText');
-    if (body.classList.contains('night-mode')) {
-      slogan.textContent = nightSlogans[Math.floor(Math.random() * nightSlogans.length)];
-    } else {
-      slogan.textContent = '在代码里构建逻辑，在方块里搭建世界，在赛场里验证热爱。';
-    }
-    
-    slogan.style.animation = 'none';
-    slogan.offsetHeight; // 触发重绘重置动画
-    slogan.style.animation = 'typing 3.5s steps(30, end) 0.2s forwards, blink 0.75s step-end infinite';
-  }
-  
-  logoClickTimer = setTimeout(() => logoClickCount = 0, 1000);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// ==================== 滚动交互 ====================
-const navbar = document.getElementById('navbar');
-const backTopBtn = document.getElementById('backTopBtn');
-const scrollProgress = document.getElementById('scrollProgress');
-const sideNav = document.getElementById('sideNav');
-const bgGrid = document.getElementById('bgGrid');
-
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  
-  // 导航栏毛玻璃效果
-  navbar.classList.toggle('scrolled', scrollY > 50);
-  
-  // 回到顶部 & 侧边目录显隐
-  backTopBtn.classList.toggle('show', scrollY > 500);
-  sideNav.classList.toggle('show', scrollY > 500);
-  
-  // 滚动进度条
-  scrollProgress.style.width = (scrollY / docHeight) * 100 + '%';
-  
-  // 背景视差效果
-  bgGrid.style.transform = `translateY(${scrollY * 0.3}px)`;
-  
-  // 更新导航高亮
-  updateNavActive();
-  updateSideNavActive();
-});
-
-backTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// 移动端菜单
-const menuToggle = document.getElementById('menuToggle');
-const navLinks = document.getElementById('navLinks');
-menuToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
-document.querySelectorAll('.nav-link').forEach(link => {
-  link.addEventListener('click', () => navLinks.classList.remove('open'));
-});
-
-// ==================== 滚动入场动画 ====================
-const fadeElements = document.querySelectorAll('.fade-in-up');
-const timelineItems = document.querySelectorAll('.timeline-item');
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      if (entry.target.classList.contains('timeline-item')) {
-        entry.target.classList.add('active');
-      }
-      // 触发数字计数动画
-      const numEl = entry.target.querySelector('.total-time-number');
-      if (numEl) animateNumber(numEl);
-    }
-  });
-}, { threshold: 0.15 });
-
-fadeElements.forEach(el => observer.observe(el));
-timelineItems.forEach(el => observer.observe(el));
-
-// 数字滚动动画
-function animateNumber(element) {
-  const target = parseFloat(element.dataset.target);
-  const duration = 2000;
-  const startTime = performance.now();
-  
-  function update(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    element.textContent = (target * ease).toFixed(1);
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-
-// ==================== 导航高亮同步 ====================
-const sections = document.querySelectorAll('section[id]');
-const navLinkItems = document.querySelectorAll('.nav-link');
-
-function updateNavActive() {
-  const scrollY = window.scrollY + 100;
-  sections.forEach(section => {
-    const top = section.offsetTop;
-    const height = section.offsetHeight;
-    const id = section.getAttribute('id');
-    if (scrollY >= top && scrollY < top + height) {
-      navLinkItems.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
-      });
-    }
-  });
-}
-
-// 侧边目录交互
-const sideNavItems = document.querySelectorAll('.side-nav-item');
-function updateSideNavActive() {
-  const scrollY = window.scrollY + 100;
-  sections.forEach(section => {
-    const id = '#' + section.getAttribute('id');
-    if (scrollY >= section.offsetTop && scrollY < section.offsetTop + section.offsetHeight) {
-      sideNavItems.forEach(item => {
-        item.classList.toggle('active', item.dataset.target === id);
-      });
-    }
-  });
-}
-
-sideNavItems.forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelector(item.dataset.target).scrollIntoView({ behavior: 'smooth' });
-  });
-});
-
-// ==================== 本地留言墙 ====================
-const messageForm = document.getElementById('messageForm');
-const messagesList = document.getElementById('messagesList');
-const STORAGE_KEY = 'insomnia_guestbook';
-
-function loadMessages() {
-  const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  renderMessages(messages);
-}
-
-function renderMessages(messages) {
-  messagesList.innerHTML = '';
-  if (messages.length === 0) {
-    messagesList.innerHTML = '<div style="text-align:center; color: var(--text-secondary); padding: 40px;">还没有留言，来写下第一条吧～</div>';
-    return;
-  }
-  messages.reverse().forEach(msg => {
-    const item = document.createElement('div');
-    item.className = 'message-item fade-in-up visible';
-    item.innerHTML = `
-      <div class="message-header">
-        <span class="message-name">${escapeHtml(msg.name)}</span>
-        <span class="message-time">${formatTime(msg.time)}</span>
-      </div>
-      <div class="message-content">${escapeHtml(msg.content)}</div>
-    `;
-    messagesList.appendChild(item);
-  });
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function formatTime(timestamp) {
-  return new Date(timestamp).toLocaleString('zh-CN', {
-    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
-  });
-}
-
-messageForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = document.getElementById('msgName').value.trim();
-  const content = document.getElementById('msgContent').value.trim();
-  if (!name || !content) return;
-  
-  const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  messages.push({ name, content, time: Date.now() });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-  
-  messageForm.reset();
-  loadMessages();
-});
-
-// ==================== 站点运行天数 ====================
-function updateRunTime() {
-  const startDate = new Date('2025-01-01'); // 可自行修改起始日期
-  const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
-  document.getElementById('siteRunTime').textContent = `本站已平稳运行 ${days} 天`;
-}
-
-// ==================== 页面停留时长统计 ====================
-let staySeconds = 0;
-function updateStayTime() {
-  staySeconds++;
-  const min = Math.floor(staySeconds / 60);
-  const sec = staySeconds % 60;
-  document.getElementById('stayTime').textContent = `本次停留：${min}分${sec}秒`;
-}
-setInterval(updateStayTime, 1000);
-
-// ==================== 一键复制页面链接 ====================
-const copyBtn = document.getElementById('copyBtn');
-const copyTip = document.getElementById('copyTip');
-
-copyBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(window.location.href).then(() => {
-    copyTip.classList.add('show');
-    setTimeout(() => copyTip.classList.remove('show'), 1500);
-  });
-});
-
-// ==================== 全屏模式切换 ====================
-const fullscreenBtn = document.getElementById('fullscreenBtn');
-fullscreenBtn.addEventListener('click', () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  } else {
-    document.exitFullscreen();
-  }
-});
-
-// ==================== 点击粒子特效 ====================
-document.addEventListener('click', (e) => {
-  for (let i = 0; i < 5; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'click-particle';
-    const size = Math.random() * 8 + 4;
-    particle.style.width = size + 'px';
-    particle.style.height = size + 'px';
-    particle.style.left = (e.clientX + (Math.random() - 0.5) * 20) + 'px';
-    particle.style.top = (e.clientY + (Math.random() - 0.5) * 20) + 'px';
-    document.body.appendChild(particle);
-    setTimeout(() => particle.remove(), 800);
-  }
-});
-
-// ==================== Konami代码雨彩蛋 ====================
-const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-let konamiIndex = 0;
-
-document.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === konamiCode[konamiIndex].toLowerCase()) {
-    konamiIndex++;
-    if (konamiIndex === konamiCode.length) {
-      triggerCodeRain();
-      konamiIndex = 0;
-    }
-  } else {
-    konamiIndex = 0;
-  }
-});
-
-function triggerCodeRain() {
-  const container = document.getElementById('codeRain');
-  container.classList.add('active');
-  container.innerHTML = '';
-  
-  const chars = '01ABCDEF{}[]<>#$%&*+-=/\\';
-  const columns = Math.floor(window.innerWidth / 20);
-  
-  for (let i = 0; i < columns; i++) {
-    const col = document.createElement('div');
-    col.className = 'code-column';
-    col.style.left = i * 20 + 'px';
-    col.style.animationDuration = (Math.random() * 3 + 2) + 's';
-    col.style.animationDelay = Math.random() * 2 + 's';
-    
-    let text = '';
-    for (let j = 0; j < 30; j++) {
-      text += chars[Math.floor(Math.random() * chars.length)] + '\n';
-    }
-    col.textContent = text;
-    container.appendChild(col);
-  }
-  
-  setTimeout(() => {
-    container.classList.remove('active');
-    setTimeout(() => container.innerHTML = '', 500);
-  }, 5000);
-}
-
-// ==================== 音乐播放器 ====================
-const musicBtn = document.getElementById('musicBtn');
-let isPlaying = false;
-// 实际使用时替换为本地音频路径
-// const audio = new Audio('music.mp3');
-
-musicBtn.addEventListener('click', () => {
-  isPlaying = !isPlaying;
-  const icon = musicBtn.querySelector('svg');
-  icon.innerHTML = isPlaying
-    ? '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>'
-    : '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-  
-  // 取消注释启用播放功能
-  // isPlaying ? audio.play().catch(()=>{}) : audio.pause();
-});
-
-// ==================== 页面初始化 ====================
-document.addEventListener('DOMContentLoaded', () => {
-  createStars();
-  createMeteors();
-  loadMessages();
-  updateRunTime();
-  setInterval(updateRunTime, 60000); // 每分钟更新天数
-});
-</script>
+        // ========== 站点运行天数 ==========
+        function calculateRunDays() {
+            const startDate = new Date('2022-09-01'); // 建站起始日期
+            const now = new Date();
+            const diffTime = Math.abs(now - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('runDays').textContent = diffDays;
+        }
+        calculateRunDays();
+    </script>
 </body>
 </html>
