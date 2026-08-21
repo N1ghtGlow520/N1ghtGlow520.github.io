@@ -1322,6 +1322,10 @@ body.night-mode .meteor-container { opacity: 1; }
         <div class="music-volume-fill" id="musicVolumeFill"></div>
       </div>
     </div>
+    <!-- 官方iframe兜底播放器（直连失败时显示） -->
+    <div class="music-iframe-wrap" id="musicIframeWrap" style="display:none;margin-top:8px;">
+      <iframe id="musicIframe" frameborder="no" border="0" marginwidth="0" marginheight="0" style="width:100%;height:86px;border-radius:8px;" allow="autoplay"></iframe>
+    </div>
   </div>
 </div>
 <!-- Hero首屏 -->
@@ -1692,11 +1696,11 @@ body.night-mode .meteor-container { opacity: 1; }
       </div>
       <div class="contact-info">
         <h4>微信</h4>
-        <div class="contact-value">CNECTY</div>
+        <div class="contact-value">你的微信号</div>
       </div>
       <span class="contact-copy-hint">点击复制</span>
     </div>
-    <div class="contact-card fade-in-up" data-copy="1957784559">
+    <div class="contact-card fade-in-up" data-copy="你的QQ号">
       <div class="contact-icon">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2a5 5 0 0 0-5 5v2a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"></path>
@@ -1706,7 +1710,7 @@ body.night-mode .meteor-container { opacity: 1; }
       </div>
       <div class="contact-info">
         <h4>QQ</h4>
-        <div class="contact-value">1957784559</div>
+        <div class="contact-value">你的QQ号</div>
       </div>
       <span class="contact-copy-hint">点击复制</span>
     </div>
@@ -1752,7 +1756,7 @@ body.night-mode .meteor-container { opacity: 1; }
             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
           </svg>
         </a>
-        <a href="1957784559@qq.co" class="social-link" title="邮箱">
+        <a href="mailto:your@email.com" class="social-link" title="邮箱">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
             <polyline points="22,6 12,13 2,6"></polyline>
@@ -1770,7 +1774,7 @@ body.night-mode .meteor-container { opacity: 1; }
 //  歌单：https://music.163.com/#/playlist?id=123456
 //  留空则不启用音乐播放功能
 // ============================================================
-const NETEASE_MUSIC_URL = 'https://music.163.com/song?id=208891&uct2=U2FsdGVkX1/0oe09lrE38tQNW4Wj6odJ8h7Gfh33uN0=';
+const NETEASE_MUSIC_URL = 'https://music.163.com/song?id=208891';
 
 // ==================== 初始化背景装饰 ====================
 // 生成随机漂浮星点
@@ -1997,7 +2001,7 @@ document.querySelectorAll('.contact-card').forEach(card => {
 });
 // ==================== 站点运行天数 ====================
 function updateRunTime() {
-  const startDate = new Date('2026-08-21'); // 可自行修改起始日期
+  const startDate = new Date('2025-01-01'); // 可自行修改起始日期
   const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
   document.getElementById('siteRunTime').textContent = `本站已平稳运行 ${days} 天`;
 }
@@ -2195,8 +2199,9 @@ function loadCurrentSong() {
   
   if (!audio) {
     audio = new Audio();
-    audio.crossOrigin = 'anonymous';
+    // 注意：不设置 crossOrigin，网易云音频服务器不支持 CORS，设置后会导致加载失败
     audio.volume = 0.7;
+    audio.preload = 'metadata';
     
     audio.addEventListener('loadedmetadata', () => {
       musicTotalTime.textContent = formatTime(audio.duration);
@@ -2223,17 +2228,49 @@ function loadCurrentSong() {
       }
     });
     
-    audio.addEventListener('error', () => {
-      musicInfo.textContent = '歌曲加载失败，请检查链接';
+    audio.addEventListener('error', (e) => {
+      console.warn('音频加载失败，尝试备用方案...', e);
+      // 第一次失败：尝试不带 .mp3 后缀的备用链接
+      if (!audio._retried) {
+        audio._retried = true;
+        const song = playlistSongs[currentSongIndex];
+        audio.src = `https://music.163.com/song/media/outer/url?id=${song.id}`;
+        audio.load();
+        return;
+      }
+      // 第二次失败：显示官方 iframe 播放器作为兜底
+      musicInfo.textContent = '直连播放失败，已切换官方播放器';
+      showIframeFallback();
       isPlaying = false;
       updatePlayIcon();
     });
   }
   
   audio.src = audioUrl;
+  // 重置重试标志和iframe兜底
+  if (audio) audio._retried = false;
+  const iframeWrap = document.getElementById('musicIframeWrap');
+  if (iframeWrap) iframeWrap.style.display = 'none';
   const displayName = song.name + (song.artist ? ' - ' + song.artist : '');
   musicInfo.textContent = displayName;
   musicInfo.title = displayName;
+}
+
+// 官方iframe兜底播放器（直连播放失败时调用）
+function showIframeFallback() {
+  const song = playlistSongs[currentSongIndex];
+  if (!song) return;
+  const iframeWrap = document.getElementById('musicIframeWrap');
+  const iframe = document.getElementById('musicIframe');
+  // type=2 为单曲播放器，auto=1 自动播放
+  iframe.src = `https://music.163.com/outchain/player?type=2&id=${song.id}&auto=1&height=66`;
+  iframeWrap.style.display = 'block';
+  // 自动展开播放器以便看到iframe
+  if (!musicPlayer.classList.contains('expanded')) {
+    musicPlayer.classList.add('expanded');
+    const icon = musicExpandBtn.querySelector('svg');
+    icon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
+  }
 }
 
 // 更新播放/暂停图标
