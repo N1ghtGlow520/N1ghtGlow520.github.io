@@ -134,7 +134,7 @@ body {
 body.dark .star { opacity: 0.6; }
 body.night-mode .star { opacity: 0.9; }
 
-/* 流星效果（深夜模式专属） */
+/* 流星效果（深夜模式专属 · 已修复方向与位置） */
 .meteor-container {
   position: fixed;
   top: 0;
@@ -151,15 +151,29 @@ body.night-mode .meteor-container { opacity: 1; }
 .meteor {
   position: absolute;
   width: 2px;
-  height: 80px;
+  height: 90px;
   background: linear-gradient(to bottom, var(--accent-secondary), transparent);
-  transform: rotate(-45deg);
-  animation: meteorFall 3s linear infinite;
+  transform: rotate(45deg);
+  transform-origin: top center;
   opacity: 0;
+  will-change: left, top, opacity;
+  animation-name: meteorFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 @keyframes meteorFall {
-  0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; }
-  100% { transform: translateX(-300px) translateY(300px) rotate(-45deg); opacity: 0; }
+  0% {
+    opacity: 0;
+    left: var(--x-start);
+    top: var(--y-start);
+  }
+  15% { opacity: 0.9; }
+  85% { opacity: 0.9; }
+  100% {
+    opacity: 0;
+    left: calc(var(--x-start) - 380px);
+    top: calc(var(--y-start) + 380px);
+  }
 }
 
 /* ========== 滚动进度条 ========== */
@@ -871,7 +885,7 @@ body.night-mode .meteor-container { opacity: 1; }
   line-height: 1.6;
 }
 
-/* ========== 侧边悬浮目录（新增功能1） ========== */
+/* ========== 侧边悬浮目录 ========== */
 .side-nav {
   position: fixed;
   right: 24px;
@@ -920,7 +934,7 @@ body.night-mode .meteor-container { opacity: 1; }
   transform: scale(1.3);
 }
 
-/* ========== 音乐播放器（新增功能2） ========== */
+/* ========== 音乐播放器 ========== */
 .music-player {
   position: fixed;
   bottom: 24px;
@@ -1001,6 +1015,27 @@ body.night-mode .meteor-container { opacity: 1; }
   100% { transform: scale(2); opacity: 0; }
 }
 
+/* ========== 复制提示 ========== */
+.copy-tip {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  background: var(--accent-primary);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 1002;
+}
+.copy-tip.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* ========== 页脚 ========== */
 .footer {
   padding: 40px 24px;
@@ -1040,27 +1075,6 @@ body.night-mode .meteor-container { opacity: 1; }
   border-color: var(--accent-primary);
   color: var(--accent-primary);
   transform: translateY(-2px);
-}
-
-/* ========== 复制提示 ========== */
-.copy-tip {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  background: var(--accent-primary);
-  color: white;
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 1002;
-}
-.copy-tip.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
 }
 
 /* ========== 响应式适配 ========== */
@@ -1138,14 +1152,14 @@ body.night-mode .meteor-container { opacity: 1; }
       <li><a href="#guestbook" class="nav-link">留言墙</a></li>
     </ul>
     <div class="nav-actions">
-      <!-- 一键复制链接（新增功能3） -->
+      <!-- 一键复制链接 -->
       <button class="icon-btn" id="copyBtn" title="复制页面链接">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
       </button>
-      <!-- 全屏模式（新增功能4） -->
+      <!-- 全屏模式 -->
       <button class="icon-btn" id="fullscreenBtn" title="全屏模式">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
@@ -1229,7 +1243,6 @@ body.night-mode .meteor-container { opacity: 1; }
     <div class="about-text fade-in-up">
       <p>目前是一名在读初三学生，热衷于把想法落地为可运行的实体与程序。享受从0到1的搭建过程，既沉迷游戏里的战术与创造，也热爱现实中的机械与代码，习惯用技术解决身边的小问题。</p>
       <div class="skill-tags">
-        <!-- 技能标签带熟练度提示（新增功能5） -->
         <span class="skill-tag" data-level="熟练">C++</span>
         <span class="skill-tag" data-level="熟练">Python</span>
         <span class="skill-tag" data-level="熟练">HTML/CSS/JS</span>
@@ -1518,7 +1531,7 @@ body.night-mode .meteor-container { opacity: 1; }
     <div class="footer-left">© 2026 失眠夜 · 个人空间</div>
     <div class="footer-center footer-stats">
       <span id="siteRunTime">本站已平稳运行：计算中...</span>
-      <span id="stayTime">本次停留：0分0秒</span> <!-- 新增功能6：停留时长统计 -->
+      <span id="stayTime">本次停留：0分0秒</span>
     </div>
     <div class="footer-right">
       <div class="footer-social">
@@ -1557,16 +1570,23 @@ function createStars() {
   }
 }
 
-// 生成流星
+// 生成流星（已修复：统一从右上向左下划过，位置随机错开）
 function createMeteors() {
   const container = document.getElementById('meteorContainer');
-  for (let i = 0; i < 6; i++) {
+  const meteorCount = 8;
+  for (let i = 0; i < meteorCount; i++) {
     const meteor = document.createElement('div');
     meteor.className = 'meteor';
-    meteor.style.left = Math.random() * 100 + '%';
-    meteor.style.top = Math.random() * 50 + '%';
-    meteor.style.animationDuration = (Math.random() * 2 + 2) + 's';
-    meteor.style.animationDelay = Math.random() * 6 + 's';
+    // 随机初始位置：x轴60%~120%（右侧区域），y轴-10%~40%（上方区域）
+    const startX = Math.random() * 60 + 60 + '%';
+    const startY = Math.random() * 50 - 10 + '%';
+    meteor.style.setProperty('--x-start', startX);
+    meteor.style.setProperty('--y-start', startY);
+    // 随机动画时长：3.5~6.5秒
+    const duration = Math.random() * 3 + 3.5;
+    meteor.style.animationDuration = duration + 's';
+    // 随机延迟：0~10秒，错开出现时间
+    meteor.style.animationDelay = Math.random() * 10 + 's';
     container.appendChild(meteor);
   }
 }
@@ -1610,7 +1630,7 @@ const navLogo = document.getElementById('navLogo');
 let logoClickCount = 0;
 let logoClickTimer = null;
 
-// 深夜模式随机slogan（新增功能7：随机短句）
+// 深夜模式随机slogan
 const nightSlogans = [
   '夜色温柔，代码不眠，星光与你都在。',
   '失眠的夜里，每一行代码都在发光。',
@@ -1823,7 +1843,7 @@ function updateRunTime() {
   document.getElementById('siteRunTime').textContent = `本站已平稳运行 ${days} 天`;
 }
 
-// ==================== 新增功能6：页面停留时长统计 ====================
+// ==================== 页面停留时长统计 ====================
 let staySeconds = 0;
 function updateStayTime() {
   staySeconds++;
@@ -1833,7 +1853,7 @@ function updateStayTime() {
 }
 setInterval(updateStayTime, 1000);
 
-// ==================== 新增功能3：一键复制页面链接 ====================
+// ==================== 一键复制页面链接 ====================
 const copyBtn = document.getElementById('copyBtn');
 const copyTip = document.getElementById('copyTip');
 
@@ -1844,7 +1864,7 @@ copyBtn.addEventListener('click', () => {
   });
 });
 
-// ==================== 新增功能4：全屏模式切换 ====================
+// ==================== 全屏模式切换 ====================
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 fullscreenBtn.addEventListener('click', () => {
   if (!document.fullscreenElement) {
