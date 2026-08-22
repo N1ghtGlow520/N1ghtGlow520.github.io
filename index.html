@@ -1898,7 +1898,7 @@ sideNavItems.forEach(item => {
 });
 // ==================== 站点运行天数 ====================
 function updateRunTime() {
-  const startDate = new Date('2025-01-01');
+  const startDate = new Date('2026-8-21');
   const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
   document.getElementById('siteRunTime').textContent = `本站已平稳运行 ${days} 天`;
 }
@@ -1993,12 +1993,12 @@ let isPlaying = false;
 
 // 本地音频配置 - 将你的mp3文件放在仓库根目录，修改下面的文件名即可
 const audio = new Audio();
-audio.src = 'music.mp3'; 
+audio.src = 'Summer Wind - Fire Sheep is Sleeping.mp3'; 
 audio.loop = true;
 
 // 音频加载成功后更新歌名（可选：修改为你的歌曲名）
 audio.addEventListener('loadeddata', () => {
-  musicInfo.textContent = '深夜纯音 · 背景音乐';
+  musicInfo.textContent = '夏天的风 · 背景音乐';
 });
 
 musicBtn.addEventListener('click', () => {
@@ -2012,7 +2012,7 @@ musicBtn.addEventListener('click', () => {
     audio.play().catch(() => {
       isPlaying = false;
       icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-      copyTip.textContent = '音频加载失败，请检查文件路径';
+      copyTip.textContent = '音频未设置';
       copyTip.classList.add('show');
       setTimeout(() => copyTip.classList.remove('show'), 2000);
     });
