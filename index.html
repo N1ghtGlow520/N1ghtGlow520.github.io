@@ -126,7 +126,7 @@ body {
 }
 body.dark .star { opacity: 0.6; }
 body.night-mode .star { opacity: 0.9; }
-/* 流星效果（深夜模式专属 · 已修复方向与位置） */
+/* 流星效果（深夜模式专属） */
 .meteor-container {
   position: fixed;
   top: 0;
@@ -725,7 +725,7 @@ body.night-mode .meteor-container { opacity: 1; }
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 0 0 24px;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -745,6 +745,35 @@ body.night-mode .meteor-container { opacity: 1; }
   padding: 4px 30px;
   font-size: 12px;
   transform: rotate(45deg);
+  z-index: 2;
+}
+
+/* 卡片顶部状态条 */
+.project-status-bar {
+  width: 100%;
+  height: 6px;
+  position: relative;
+  animation: statusBreath 2s ease-in-out infinite;
+}
+.status-normal {
+  background: #10b981;
+  box-shadow: 0 0 12px #10b981;
+}
+.status-warning {
+  background: #f59e0b;
+  box-shadow: 0 0 12px #f59e0b;
+}
+.status-error {
+  background: #ef4444;
+  box-shadow: 0 0 12px #ef4444;
+}
+@keyframes statusBreath {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.6; filter: brightness(1.2); }
+}
+
+.project-card-body {
+  padding: 20px 24px 0;
 }
 .project-type {
   display: inline-block;
@@ -759,8 +788,6 @@ body.night-mode .meteor-container { opacity: 1; }
   font-size: 18px;
   margin-bottom: 10px;
   color: var(--text-primary);
-  display: flex;
-  align-items: center;
 }
 .project-tech {
   font-size: 13px;
@@ -779,6 +806,7 @@ body.night-mode .meteor-container { opacity: 1; }
   font-size: 14px;
   position: relative;
   cursor: pointer;
+  margin: 0 24px;
 }
 .project-link::after {
   content: '→';
@@ -786,24 +814,6 @@ body.night-mode .meteor-container { opacity: 1; }
   transition: margin-left 0.3s ease;
 }
 .project-link:hover::after { margin-left: 8px; }
-
-/* 状态指示灯 */
-.status-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 8px;
-  animation: statusBlink 1.5s ease-in-out infinite;
-  flex-shrink: 0;
-}
-.status-normal { background: #10b981; box-shadow: 0 0 8px #10b981; }
-.status-warning { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
-.status-error { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
-@keyframes statusBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
 
 /* ========== 联系我板块 ========== */
 .contact-grid {
@@ -922,83 +932,6 @@ body.night-mode .meteor-container { opacity: 1; }
   box-shadow: 0 4px 12px var(--shadow-color);
 }
 
-/* ========== 留言墙 ========== */
-.guestbook-container { max-width: 800px; margin: 0 auto; }
-.guestbook-form {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 32px;
-}
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.form-row input,
-.form-row textarea {
-  padding: 10px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.3s ease;
-  font-family: inherit;
-}
-.form-row textarea { resize: vertical; min-height: 80px; }
-.form-row input:focus,
-.form-row textarea:focus { border-color: var(--accent-primary); }
-.submit-btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.submit-btn:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px var(--shadow-color);
-}
-.submit-btn:active { transform: scale(0.98); }
-.messages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.message-item {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  transition: all 0.3s ease;
-}
-.message-item:hover { border-color: var(--accent-primary); }
-.message-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.message-name {
-  font-weight: 600;
-  color: var(--accent-primary);
-  font-size: 14px;
-}
-.message-time {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-.message-content {
-  font-size: 14px;
-  color: var(--text-primary);
-  line-height: 1.6;
-}
 /* ========== 侧边悬浮目录 ========== */
 .side-nav {
   position: fixed;
@@ -1219,7 +1152,6 @@ body.night-mode .meteor-container { opacity: 1; }
   .side-nav { display: none; }
   .hero-title { font-size: 40px; }
   .section { padding: 60px 20px; }
-  .form-row { grid-template-columns: 1fr; }
   .footer-container { flex-direction: column; text-align: center; }
   .music-player { max-width: calc(100vw - 48px); }
 }
@@ -1277,7 +1209,6 @@ body.night-mode .meteor-container { opacity: 1; }
       <li><a href="#robot" class="nav-link">机器人竞赛</a></li>
       <li><a href="#projects" class="nav-link">开发作品</a></li>
       <li><a href="#awards" class="nav-link">荣誉奖项</a></li>
-      <li><a href="#guestbook" class="nav-link">留言墙</a></li>
       <li><a href="#contact" class="nav-link">联系我</a></li>
     </ul>
     <div class="nav-actions">
@@ -1334,7 +1265,6 @@ body.night-mode .meteor-container { opacity: 1; }
   <div class="side-nav-item" data-target="#robot" data-label="机器人竞赛"></div>
   <div class="side-nav-item" data-target="#projects" data-label="开发作品"></div>
   <div class="side-nav-item" data-target="#awards" data-label="荣誉奖项"></div>
-  <div class="side-nav-item" data-target="#guestbook" data-label="留言墙"></div>
   <div class="side-nav-item" data-target="#contact" data-label="联系我"></div>
 </div>
 <!-- 音乐播放器 -->
@@ -1344,7 +1274,7 @@ body.night-mode .meteor-container { opacity: 1; }
       <polygon points="5 3 19 12 5 21 5 3"></polygon>
     </svg>
   </button>
-  <div class="music-info">深夜纯音 · 待添加</div>
+  <div class="music-info" id="musicInfo">深夜纯音 · 背景音乐</div>
 </div>
 <!-- Hero首屏 -->
 <section class="hero" id="home">
@@ -1543,24 +1473,43 @@ body.night-mode .meteor-container { opacity: 1; }
   <h2 class="section-title fade-in-up">个人开发项目</h2>
   <div class="project-grid">
     <div class="project-card fade-in-up">
-      <span class="project-type">校园管理工具</span>
-      <h3><span class="status-dot status-normal"></span>兴华中学广播站系统</h3>
-      <div class="project-tech">技术栈：原生开发 · 本地部署</div>
-      <p class="project-desc">针对校园广播站排班混乱、播放流程不规范的问题开发，支持广播排班管理、播放日程控制、站点信息维护，已投入实际场景使用。</p>
+      <div class="project-status-bar status-normal"></div>
+      <div class="project-card-body">
+        <span class="project-type">校园管理工具</span>
+        <h3>兴华中学广播站系统</h3>
+        <div class="project-tech">技术栈：原生开发 · 本地部署</div>
+        <p class="project-desc">针对校园广播站排班混乱、播放流程不规范的问题开发，支持广播排班管理、播放日程控制、站点信息维护，已投入实际场景使用。</p>
+      </div>
       <a href="Xinghua Middle School Broadcasting Station System.html" class="project-link">查看项目</a>
     </div>
     <div class="project-card fade-in-up">
-      <span class="project-type">本地效率工具</span>
-      <h3><span class="status-dot status-normal"></span>自助记账系统</h3>
-      <div class="project-tech">技术栈：单文件 exe · 本地存储</div>
-      <p class="project-desc">轻量化单文件工具，无需安装开箱即用，支持收支记录、分类统计、数据可视化、本地数据存储，满足日常收支管理需求。</p>
+      <div class="project-status-bar status-normal"></div>
+      <div class="project-card-body">
+        <span class="project-type">本地效率工具</span>
+        <h3>自助记账系统</h3>
+        <div class="project-tech">技术栈：单文件 exe · 本地存储</div>
+        <p class="project-desc">轻量化单文件工具，无需安装开箱即用，支持收支记录、分类统计、数据可视化、本地数据存储，满足日常收支管理需求。</p>
+      </div>
       <a href="Self-service accounting system Pro Enhanced V6.html" class="project-link">查看项目</a>
     </div>
+    <div class="project-card fade-in-up">
+      <div class="project-status-bar status-normal"></div>
+      <div class="project-card-body">
+        <span class="project-type">机器人编程工具</span>
+        <h3>纳英特 M4e 代码编写系统</h3>
+        <div class="project-tech">技术栈：可视化编程 · 代码生成</div>
+        <p class="project-desc">专为纳英特M4e机器人设计的代码编写工具，支持可视化拖拽生成C++代码，简化机器人程序开发流程，提升调试效率。</p>
+      </div>
+      <a href="Nayingte M4e Code Writing System V2.9Pro.html" class="project-link">查看项目</a>
+    </div>
     <div class="project-card fade-in-up wip">
-      <span class="project-type">创意工具</span>
-      <h3><span class="status-dot status-warning"></span>待开发项目 · 敬请期待</h3>
-      <div class="project-tech">技术栈：规划中</div>
-      <p class="project-desc">新的效率工具正在构思与开发中，持续打磨功能与体验，后续将更新上线。</p>
+      <div class="project-status-bar status-warning"></div>
+      <div class="project-card-body">
+        <span class="project-type">创意工具</span>
+        <h3>待开发项目 · 敬请期待</h3>
+        <div class="project-tech">技术栈：规划中</div>
+        <p class="project-desc">新的效率工具正在构思与开发中，持续打磨功能与体验，后续将更新上线。</p>
+      </div>
       <span class="project-link" style="opacity: 0.5; pointer-events: none;">开发中...</span>
     </div>
   </div>
@@ -1617,23 +1566,6 @@ body.night-mode .meteor-container { opacity: 1; }
         <h4>优秀学生干部</h4>
         <p>校级荣誉</p>
       </div>
-    </div>
-  </div>
-</section>
-<div class="divider"></div>
-<!-- 留言墙 -->
-<section class="section" id="guestbook">
-  <h2 class="section-title fade-in-up">留言墙</h2>
-  <div class="guestbook-container">
-    <form class="guestbook-form fade-in-up" id="messageForm">
-      <div class="form-row">
-        <input type="text" id="msgName" placeholder="你的昵称" required maxlength="20">
-        <textarea id="msgContent" placeholder="写下你想说的话..." required maxlength="200"></textarea>
-      </div>
-      <button type="submit" class="submit-btn">提交留言</button>
-    </form>
-    <div class="messages-list" id="messagesList">
-      <!-- 留言动态渲染 -->
     </div>
   </div>
 </section>
@@ -1728,22 +1660,19 @@ function createStars() {
     container.appendChild(star);
   }
 }
-// 生成流星（已修复：统一从右上向左下划过，位置随机错开）
+// 生成流星
 function createMeteors() {
   const container = document.getElementById('meteorContainer');
   const meteorCount = 8;
   for (let i = 0; i < meteorCount; i++) {
     const meteor = document.createElement('div');
     meteor.className = 'meteor';
-    // 随机初始位置：x轴60%~120%（右侧区域），y轴-10%~40%（上方区域）
     const startX = Math.random() * 60 + 60 + '%';
     const startY = Math.random() * 50 - 10 + '%';
     meteor.style.setProperty('--x-start', startX);
     meteor.style.setProperty('--y-start', startY);
-    // 随机动画时长：3.5~6.5秒
     const duration = Math.random() * 3 + 3.5;
     meteor.style.animationDuration = duration + 's';
-    // 随机延迟：0~10秒，错开出现时间
     meteor.style.animationDelay = Math.random() * 10 + 's';
     container.appendChild(meteor);
   }
@@ -1751,7 +1680,6 @@ function createMeteors() {
 // ==================== 亮暗主题切换 ====================
 const themeBtn = document.getElementById('themeBtn');
 const body = document.body;
-// 读取本地主题偏好
 const savedTheme = localStorage.getItem('theme');
 if (savedTheme === 'dark') {
   body.classList.add('dark');
@@ -1772,7 +1700,7 @@ function updateThemeIcon(isDark) {
        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
 }
 themeBtn.addEventListener('click', () => {
-  body.classList.remove('night-mode'); // 切换主题时退出深夜模式
+  body.classList.remove('night-mode');
   body.classList.toggle('dark');
   const isDark = body.classList.contains('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -1783,7 +1711,6 @@ const navLogo = document.getElementById('navLogo');
 let logoClickCount = 0;
 let logoClickTimer = null;
 let musicUnlocked = false;
-// 深夜模式随机slogan
 const nightSlogans = [
   '夜色温柔，代码不眠，星光与你都在。',
   '失眠的夜里，每一行代码都在发光。',
@@ -1799,19 +1726,16 @@ navLogo.addEventListener('click', () => {
     body.classList.toggle('night-mode');
     logoClickCount = 0;
     
-    // 解锁音乐播放器
     if (!musicUnlocked) {
       const musicPlayer = document.getElementById('musicPlayer');
       musicPlayer.classList.add('show');
       musicUnlocked = true;
-      // 提示解锁成功
       const copyTip = document.getElementById('copyTip');
       copyTip.textContent = '🎵 音乐播放器已解锁！';
       copyTip.classList.add('show');
       setTimeout(() => copyTip.classList.remove('show'), 2000);
     }
     
-    // 切换slogan并重播打字机动画
     const slogan = document.getElementById('sloganText');
     if (body.classList.contains('night-mode')) {
       slogan.textContent = nightSlogans[Math.floor(Math.random() * nightSlogans.length)];
@@ -1820,7 +1744,7 @@ navLogo.addEventListener('click', () => {
     }
     
     slogan.style.animation = 'none';
-    slogan.offsetHeight; // 触发重绘重置动画
+    slogan.offsetHeight;
     slogan.style.animation = 'typing 3.5s steps(30, end) 0.2s forwards, blink 0.75s step-end infinite';
   }
   
@@ -1850,7 +1774,7 @@ document.querySelectorAll('.project-link[href]').forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const href = link.getAttribute('href');
-    const projectName = link.closest('.project-card').querySelector('h3').innerText.replace(/^./, '').trim();
+    const projectName = link.closest('.project-card').querySelector('h3').innerText.trim();
     linkModalDesc.textContent = `即将离开此网站页面，前往「${projectName}」，是否继续？`;
     pendingLink = href;
     linkModal.classList.add('show');
@@ -1870,7 +1794,6 @@ linkModalConfirm.addEventListener('click', () => {
   }
 });
 
-// 点击遮罩关闭弹窗
 linkModal.addEventListener('click', (e) => {
   if (e.target === linkModal) {
     linkModal.classList.remove('show');
@@ -1888,20 +1811,12 @@ window.addEventListener('scroll', () => {
   const scrollY = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
   
-  // 导航栏毛玻璃效果
   navbar.classList.toggle('scrolled', scrollY > 50);
-  
-  // 回到顶部 & 侧边目录显隐
   backTopBtn.classList.toggle('show', scrollY > 500);
   sideNav.classList.toggle('show', scrollY > 500);
-  
-  // 滚动进度条
   scrollProgress.style.width = (scrollY / docHeight) * 100 + '%';
-  
-  // 背景视差效果
   bgGrid.style.transform = `translateY(${scrollY * 0.3}px)`;
   
-  // 更新导航高亮
   updateNavActive();
   updateSideNavActive();
 });
@@ -1925,7 +1840,6 @@ const observer = new IntersectionObserver((entries) => {
       if (entry.target.classList.contains('timeline-item')) {
         entry.target.classList.add('active');
       }
-      // 触发数字计数动画
       const numEl = entry.target.querySelector('.total-time-number');
       if (numEl) animateNumber(numEl);
     }
@@ -1982,59 +1896,9 @@ sideNavItems.forEach(item => {
     document.querySelector(item.dataset.target).scrollIntoView({ behavior: 'smooth' });
   });
 });
-// ==================== 本地留言墙 ====================
-const messageForm = document.getElementById('messageForm');
-const messagesList = document.getElementById('messagesList');
-const STORAGE_KEY = 'insomnia_guestbook';
-function loadMessages() {
-  const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  renderMessages(messages);
-}
-function renderMessages(messages) {
-  messagesList.innerHTML = '';
-  if (messages.length === 0) {
-    messagesList.innerHTML = '<div style="text-align:center; color: var(--text-secondary); padding: 40px;">还没有留言，来写下第一条吧～</div>';
-    return;
-  }
-  messages.reverse().forEach(msg => {
-    const item = document.createElement('div');
-    item.className = 'message-item fade-in-up visible';
-    item.innerHTML = `
-      <div class="message-header">
-        <span class="message-name">${escapeHtml(msg.name)}</span>
-        <span class="message-time">${formatTime(msg.time)}</span>
-      </div>
-      <div class="message-content">${escapeHtml(msg.content)}</div>
-    `;
-    messagesList.appendChild(item);
-  });
-}
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-function formatTime(timestamp) {
-  return new Date(timestamp).toLocaleString('zh-CN', {
-    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
-  });
-}
-messageForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = document.getElementById('msgName').value.trim();
-  const content = document.getElementById('msgContent').value.trim();
-  if (!name || !content) return;
-  
-  const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  messages.push({ name, content, time: Date.now() });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-  
-  messageForm.reset();
-  loadMessages();
-});
 // ==================== 站点运行天数 ====================
 function updateRunTime() {
-  const startDate = new Date('2025-01-01'); // 可自行修改起始日期
+  const startDate = new Date('2025-01-01');
   const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
   document.getElementById('siteRunTime').textContent = `本站已平稳运行 ${days} 天`;
 }
@@ -2124,38 +1988,44 @@ function triggerCodeRain() {
 }
 // ==================== 音乐播放器 ====================
 const musicBtn = document.getElementById('musicBtn');
+const musicInfo = document.getElementById('musicInfo');
 let isPlaying = false;
-// 实际使用时替换为本地音频路径，建议使用完整mp3文件解决30秒问题
+
+// 本地音频配置 - 将你的mp3文件放在仓库根目录，修改下面的文件名即可
 const audio = new Audio();
-audio.src = 'Summer Wind - Fire Sheep is Sleeping.mp3'; 
-// audio.loop = true;
+audio.src = 'music.mp3'; 
+audio.loop = true;
+
+// 音频加载成功后更新歌名（可选：修改为你的歌曲名）
+audio.addEventListener('loadeddata', () => {
+  musicInfo.textContent = '深夜纯音 · 背景音乐';
+});
 
 musicBtn.addEventListener('click', () => {
-  if (!audio.src) {
-    copyTip.textContent = '请先配置音频文件路径';
-    copyTip.classList.add('show');
-    setTimeout(() => copyTip.classList.remove('show'), 2000);
-    return;
-  }
-  
   isPlaying = !isPlaying;
   const icon = musicBtn.querySelector('svg');
   icon.innerHTML = isPlaying
     ? '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>'
     : '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
   
-  isPlaying ? audio.play().catch(() => {
-    isPlaying = false;
-    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-  }) : audio.pause();
+  if (isPlaying) {
+    audio.play().catch(() => {
+      isPlaying = false;
+      icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+      copyTip.textContent = '音频加载失败，请检查文件路径';
+      copyTip.classList.add('show');
+      setTimeout(() => copyTip.classList.remove('show'), 2000);
+    });
+  } else {
+    audio.pause();
+  }
 });
 // ==================== 页面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
   createStars();
   createMeteors();
-  loadMessages();
   updateRunTime();
-  setInterval(updateRunTime, 60000); // 每分钟更新天数
+  setInterval(updateRunTime, 60000);
 });
 </script>
 </body>
