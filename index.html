@@ -126,7 +126,7 @@ body {
 }
 body.dark .star { opacity: 0.6; }
 body.night-mode .star { opacity: 0.9; }
-/* 流星效果（深夜模式专属 · 已修复：稀疏且缓慢） */
+/* 流星效果（深夜模式专属 · 已修复方向与位置） */
 .meteor-container {
   position: fixed;
   top: 0;
@@ -678,61 +678,6 @@ body.night-mode .meteor-container { opacity: 1; }
   color: var(--text-secondary);
   font-size: 13px;
 }
-/* ========== 个人爱好 ========== */
-.hobby-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-}
-.hobby-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 24px;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-.hobby-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px var(--shadow-color);
-  border-color: var(--accent-primary);
-}
-.hobby-icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 16px;
-  border-radius: 50%;
-  background: rgba(124, 58, 237, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent-primary);
-}
-.hobby-card h3 {
-  font-size: 18px;
-  margin-bottom: 8px;
-  color: var(--text-primary);
-}
-.hobby-card p {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-.hobby-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 12px;
-}
-.hobby-tag {
-  padding: 4px 12px;
-  border-radius: 12px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  font-size: 12px;
-  color: var(--accent-primary);
-}
 /* ========== 机器人竞赛 ========== */
 .robot-cards {
   display: grid;
@@ -814,6 +759,8 @@ body.night-mode .meteor-container { opacity: 1; }
   font-size: 18px;
   margin-bottom: 10px;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
 }
 .project-tech {
   font-size: 13px;
@@ -831,6 +778,7 @@ body.night-mode .meteor-container { opacity: 1; }
   text-decoration: none;
   font-size: 14px;
   position: relative;
+  cursor: pointer;
 }
 .project-link::after {
   content: '→';
@@ -838,28 +786,42 @@ body.night-mode .meteor-container { opacity: 1; }
   transition: margin-left 0.3s ease;
 }
 .project-link:hover::after { margin-left: 8px; }
-/* ========== 联系我 ========== */
+
+/* 状态指示灯 */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: statusBlink 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.status-normal { background: #10b981; box-shadow: 0 0 8px #10b981; }
+.status-warning { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+.status-error { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ========== 联系我板块 ========== */
 .contact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  max-width: 900px;
-  margin: 0 auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
 }
 .contact-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   padding: 24px;
+  text-align: center;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  cursor: pointer;
 }
 .contact-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px var(--shadow-color);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--shadow-color);
   border-color: var(--accent-primary);
 }
 .contact-icon {
@@ -867,32 +829,176 @@ body.night-mode .meteor-container { opacity: 1; }
   height: 48px;
   border-radius: 50%;
   background: rgba(124, 58, 237, 0.1);
+  color: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-primary);
-  flex-shrink: 0;
+  margin: 0 auto 16px;
 }
-.contact-info { flex: 1; min-width: 0; }
-.contact-info h4 {
+.contact-card h4 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+.contact-card p {
   font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 4px;
-}
-.contact-info .contact-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
   word-break: break-all;
 }
-.contact-copy-hint {
-  font-size: 12px;
-  color: var(--accent-primary);
+
+/* ========== 通用弹窗 ========== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s ease;
-  flex-shrink: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
 }
-.contact-card:hover .contact-copy-hint { opacity: 1; }
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+.modal-box {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 32px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 20px 60px var(--shadow-color);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal-box {
+  transform: translateY(0);
+}
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.modal-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.modal-btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+.modal-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+.modal-btn.primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+}
+.modal-btn.primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+/* ========== 留言墙 ========== */
+.guestbook-container { max-width: 800px; margin: 0 auto; }
+.guestbook-form {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.form-row input,
+.form-row textarea {
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+.form-row textarea { resize: vertical; min-height: 80px; }
+.form-row input:focus,
+.form-row textarea:focus { border-color: var(--accent-primary); }
+.submit-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.submit-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+.submit-btn:active { transform: scale(0.98); }
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.message-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  transition: all 0.3s ease;
+}
+.message-item:hover { border-color: var(--accent-primary); }
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.message-name {
+  font-weight: 600;
+  color: var(--accent-primary);
+  font-size: 14px;
+}
+.message-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.message-content {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
 /* ========== 侧边悬浮目录 ========== */
 .side-nav {
   position: fixed;
@@ -949,25 +1055,21 @@ body.night-mode .meteor-container { opacity: 1; }
   z-index: 998;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 10px 16px;
+  border-radius: 50px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
   transition: all var(--transition);
   box-shadow: 0 4px 12px var(--shadow-color);
-  max-width: 320px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
 }
-.music-player.expanded {
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  padding: 14px 16px;
-}
-.music-player-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.music-player.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 .music-btn {
   width: 32px;
@@ -981,88 +1083,15 @@ body.night-mode .meteor-container { opacity: 1; }
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  flex-shrink: 0;
 }
 .music-btn:hover { transform: scale(1.1); }
 .music-info {
   font-size: 13px;
   color: var(--text-secondary);
-  max-width: 160px;
+  max-width: 120px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  flex: 1;
-}
-.music-player.expanded .music-info {
-  max-width: 100%;
-  white-space: normal;
-}
-.music-expand-btn {
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-.music-expand-btn:hover {
-  color: var(--accent-primary);
-  background: rgba(124, 58, 237, 0.1);
-}
-.music-progress-wrap {
-  display: none;
-  flex-direction: column;
-  gap: 4px;
-}
-.music-player.expanded .music-progress-wrap {
-  display: flex;
-}
-.music-progress-bar {
-  width: 100%;
-  height: 4px;
-  background: var(--border-color);
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.music-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-  border-radius: 2px;
-  width: 0%;
-  transition: width 0.1s linear;
-}
-.music-time-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-.music-volume-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.music-volume-bar {
-  flex: 1;
-  height: 4px;
-  background: var(--border-color);
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-}
-.music-volume-fill {
-  height: 100%;
-  background: var(--accent-secondary);
-  border-radius: 2px;
-  width: 70%;
 }
 /* ========== 代码雨彩蛋 ========== */
 .code-rain {
@@ -1169,7 +1198,8 @@ body.night-mode .meteor-container { opacity: 1; }
   .about-content,
   .game-stats,
   .game-cards,
-  .robot-cards { grid-template-columns: 1fr; }
+  .robot-cards,
+  .contact-grid { grid-template-columns: repeat(2, 1fr); }
   
   .nav-links {
     display: none;
@@ -1189,6 +1219,7 @@ body.night-mode .meteor-container { opacity: 1; }
   .side-nav { display: none; }
   .hero-title { font-size: 40px; }
   .section { padding: 60px 20px; }
+  .form-row { grid-template-columns: 1fr; }
   .footer-container { flex-direction: column; text-align: center; }
   .music-player { max-width: calc(100vw - 48px); }
 }
@@ -1198,12 +1229,15 @@ body.night-mode .meteor-container { opacity: 1; }
   .total-time-number { font-size: 36px; }
   .music-player { bottom: 16px; left: 16px; }
   .radar-svg { width: 240px; height: 240px; }
+  .contact-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 <!-- 复制成功提示 -->
 <div class="copy-tip" id="copyTip">链接已复制到剪贴板</div>
+<!-- 彩蛋提示 -->
+<div class="copy-tip" id="eggTip" style="top: auto; bottom: 80px;">💡 停留满30秒啦！双击顶部「失眠夜」可解锁音乐播放器～</div>
 <!-- 滚动进度条 -->
 <div class="scroll-progress" id="scrollProgress"></div>
 <!-- 背景装饰层 -->
@@ -1218,6 +1252,19 @@ body.night-mode .meteor-container { opacity: 1; }
 <div class="meteor-container" id="meteorContainer"></div>
 <!-- 代码雨容器 -->
 <div class="code-rain" id="codeRain"></div>
+
+<!-- 跳转确认弹窗 -->
+<div class="modal-overlay" id="linkModal">
+  <div class="modal-box">
+    <h3 class="modal-title">即将离开本站</h3>
+    <p class="modal-desc" id="linkModalDesc">您即将前往外部网站，是否继续？</p>
+    <div class="modal-actions">
+      <button class="modal-btn" id="linkModalCancel">取消</button>
+      <button class="modal-btn primary" id="linkModalConfirm">继续前往</button>
+    </div>
+  </div>
+</div>
+
 <!-- 顶部导航栏 -->
 <nav class="navbar" id="navbar">
   <div class="nav-container">
@@ -1227,10 +1274,10 @@ body.night-mode .meteor-container { opacity: 1; }
       <li><a href="#about" class="nav-link">关于我</a></li>
       <li><a href="#timeline" class="nav-link">成长轨迹</a></li>
       <li><a href="#games" class="nav-link">游戏档案</a></li>
-      <li><a href="#hobbies" class="nav-link">个人爱好</a></li>
       <li><a href="#robot" class="nav-link">机器人竞赛</a></li>
       <li><a href="#projects" class="nav-link">开发作品</a></li>
       <li><a href="#awards" class="nav-link">荣誉奖项</a></li>
+      <li><a href="#guestbook" class="nav-link">留言墙</a></li>
       <li><a href="#contact" class="nav-link">联系我</a></li>
     </ul>
     <div class="nav-actions">
@@ -1284,49 +1331,20 @@ body.night-mode .meteor-container { opacity: 1; }
   <div class="side-nav-item" data-target="#about" data-label="关于我"></div>
   <div class="side-nav-item" data-target="#timeline" data-label="成长轨迹"></div>
   <div class="side-nav-item" data-target="#games" data-label="游戏档案"></div>
-  <div class="side-nav-item" data-target="#hobbies" data-label="个人爱好"></div>
   <div class="side-nav-item" data-target="#robot" data-label="机器人竞赛"></div>
   <div class="side-nav-item" data-target="#projects" data-label="开发作品"></div>
   <div class="side-nav-item" data-target="#awards" data-label="荣誉奖项"></div>
+  <div class="side-nav-item" data-target="#guestbook" data-label="留言墙"></div>
   <div class="side-nav-item" data-target="#contact" data-label="联系我"></div>
 </div>
 <!-- 音乐播放器 -->
 <div class="music-player" id="musicPlayer">
-  <div class="music-player-top">
-    <button class="music-btn" id="musicBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-      </svg>
-    </button>
-    <div class="music-info" id="musicInfo">深夜纯音 · 点击播放</div>
-    <button class="music-expand-btn" id="musicExpandBtn" title="展开播放器">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </button>
-  </div>
-  <div class="music-progress-wrap">
-    <div class="music-progress-bar" id="musicProgressBar">
-      <div class="music-progress-fill" id="musicProgressFill"></div>
-    </div>
-    <div class="music-time-row">
-      <span id="musicCurrentTime">0:00</span>
-      <span id="musicTotalTime">0:00</span>
-    </div>
-    <div class="music-volume-row">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary);flex-shrink:0;">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-      </svg>
-      <div class="music-volume-bar" id="musicVolumeBar">
-        <div class="music-volume-fill" id="musicVolumeFill"></div>
-      </div>
-    </div>
-    <!-- 官方iframe兜底播放器（直连失败时显示） -->
-    <div class="music-iframe-wrap" id="musicIframeWrap" style="display:none;margin-top:8px;">
-      <iframe id="musicIframe" frameborder="no" border="0" marginwidth="0" marginheight="0" style="width:100%;height:86px;border-radius:8px;" allow="autoplay"></iframe>
-    </div>
-  </div>
+  <button class="music-btn" id="musicBtn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+    </svg>
+  </button>
+  <div class="music-info">深夜纯音 · 待添加</div>
 </div>
 <!-- Hero首屏 -->
 <section class="hero" id="home">
@@ -1495,80 +1513,6 @@ body.night-mode .meteor-container { opacity: 1; }
   </div>
 </section>
 <div class="divider"></div>
-<!-- 个人爱好 -->
-<section class="section" id="hobbies">
-  <h2 class="section-title fade-in-up">个人爱好</h2>
-  <div class="hobby-grid">
-    <div class="hobby-card fade-in-up">
-      <div class="hobby-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 18V5l12-2v13"></path>
-          <circle cx="6" cy="18" r="3"></circle>
-          <circle cx="18" cy="16" r="3"></circle>
-        </svg>
-      </div>
-      <h3>音乐</h3>
-      <p>深夜里的治愈良药，偏爱纯音乐与电子乐，代码与旋律是最佳搭档。</p>
-      <div class="hobby-tags">
-        <span class="hobby-tag">纯音乐</span>
-        <span class="hobby-tag">电子</span>
-        <span class="hobby-tag">轻音乐</span>
-      </div>
-    </div>
-    <div class="hobby-card fade-in-up">
-      <div class="hobby-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="6" width="20" height="12" rx="2"></rect>
-          <line x1="6" y1="12" x2="10" y2="12"></line>
-          <line x1="8" y1="10" x2="8" y2="14"></line>
-          <circle cx="15" cy="11" r="1"></circle>
-          <circle cx="18" cy="13" r="1"></circle>
-        </svg>
-      </div>
-      <h3>游戏</h3>
-      <p>在虚拟世界中磨练战术与创造力，享受竞技博弈与自由建造的双重乐趣。</p>
-      <div class="hobby-tags">
-        <span class="hobby-tag">CS2</span>
-        <span class="hobby-tag">我的世界</span>
-        <span class="hobby-tag">红石</span>
-      </div>
-    </div>
-    <div class="hobby-card fade-in-up">
-      <div class="hobby-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6.5 6.5h11"></path>
-          <path d="M5 12h14"></path>
-          <path d="M6.5 17.5h11"></path>
-          <circle cx="12" cy="12" r="10"></circle>
-        </svg>
-      </div>
-      <h3>体育</h3>
-      <p>运动是释放压力的最佳方式，在球场上挥洒汗水，在奔跑中寻找节奏。</p>
-      <div class="hobby-tags">
-        <span class="hobby-tag">跑步</span>
-        <span class="hobby-tag">健身</span>
-        <span class="hobby-tag">球类</span>
-      </div>
-    </div>
-    <div class="hobby-card fade-in-up">
-      <div class="hobby-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-          <path d="M2 12h20"></path>
-        </svg>
-      </div>
-      <h3>羽毛球</h3>
-      <p>球场上的快速移动与精准扣杀，锻炼反应力与身体协调性，是最爱的球类运动。</p>
-      <div class="hobby-tags">
-        <span class="hobby-tag">单打</span>
-        <span class="hobby-tag">双打</span>
-        <span class="hobby-tag">扣杀</span>
-      </div>
-    </div>
-  </div>
-</section>
-<div class="divider"></div>
 <!-- 机器人竞赛 -->
 <section class="section" id="robot">
   <h2 class="section-title fade-in-up">机器人与工程</h2>
@@ -1600,28 +1544,21 @@ body.night-mode .meteor-container { opacity: 1; }
   <div class="project-grid">
     <div class="project-card fade-in-up">
       <span class="project-type">校园管理工具</span>
-      <h3>兴华中学广播站系统</h3>
+      <h3><span class="status-dot status-normal"></span>兴华中学广播站系统</h3>
       <div class="project-tech">技术栈：原生开发 · 本地部署</div>
       <p class="project-desc">针对校园广播站排班混乱、播放流程不规范的问题开发，支持广播排班管理、播放日程控制、站点信息维护，已投入实际场景使用。</p>
-      <a href="Xinghua%20Middle%20School%20Broadcasting%20Station%20System.html" class="project-link" target="_blank">查看项目</a>
+      <a href="Xinghua Middle School Broadcasting Station System.html" class="project-link">查看项目</a>
     </div>
     <div class="project-card fade-in-up">
       <span class="project-type">本地效率工具</span>
-      <h3>自助记账系统</h3>
+      <h3><span class="status-dot status-normal"></span>自助记账系统</h3>
       <div class="project-tech">技术栈：单文件 exe · 本地存储</div>
       <p class="project-desc">轻量化单文件工具，无需安装开箱即用，支持收支记录、分类统计、数据可视化、本地数据存储，满足日常收支管理需求。</p>
-      <a href="Self-service%20accounting%20system%20Pro%20Enhanced%20V6.html" class="project-link" target="_blank">查看项目</a>
-    </div>
-    <div class="project-card fade-in-up">
-      <span class="project-type">机器人编程工具</span>
-      <h3>纳英特 M4e 代码编写系统</h3>
-      <div class="project-tech">技术栈：单文件 HTML · 图形化编程</div>
-      <p class="project-desc">专为纳英特M4e机器人设计的代码编写辅助系统，提供代码编辑、语法高亮、模板快速生成等功能，提升机器人编程效率。</p>
-      <a href="Nayingte%20M4e%20Code%20Writing%20System%20V2.9Pro.html" class="project-link" target="_blank">查看项目</a>
+      <a href="Self-service accounting system Pro Enhanced V6.html" class="project-link">查看项目</a>
     </div>
     <div class="project-card fade-in-up wip">
       <span class="project-type">创意工具</span>
-      <h3>待开发项目 · 敬请期待</h3>
+      <h3><span class="status-dot status-warning"></span>待开发项目 · 敬请期待</h3>
       <div class="project-tech">技术栈：规划中</div>
       <p class="project-desc">新的效率工具正在构思与开发中，持续打磨功能与体验，后续将更新上线。</p>
       <span class="project-link" style="opacity: 0.5; pointer-events: none;">开发中...</span>
@@ -1684,60 +1621,67 @@ body.night-mode .meteor-container { opacity: 1; }
   </div>
 </section>
 <div class="divider"></div>
+<!-- 留言墙 -->
+<section class="section" id="guestbook">
+  <h2 class="section-title fade-in-up">留言墙</h2>
+  <div class="guestbook-container">
+    <form class="guestbook-form fade-in-up" id="messageForm">
+      <div class="form-row">
+        <input type="text" id="msgName" placeholder="你的昵称" required maxlength="20">
+        <textarea id="msgContent" placeholder="写下你想说的话..." required maxlength="200"></textarea>
+      </div>
+      <button type="submit" class="submit-btn">提交留言</button>
+    </form>
+    <div class="messages-list" id="messagesList">
+      <!-- 留言动态渲染 -->
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
 <!-- 联系我 -->
 <section class="section" id="contact">
   <h2 class="section-title fade-in-up">联系我</h2>
   <div class="contact-grid">
-    <div class="contact-card fade-in-up" data-copy="你的微信号">
+    <div class="contact-card fade-in-up">
       <div class="contact-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
         </svg>
       </div>
-      <div class="contact-info">
-        <h4>微信</h4>
-        <div class="contact-value">你的微信号</div>
-      </div>
-      <span class="contact-copy-hint">点击复制</span>
+      <h4>微信</h4>
+      <p>CNECTY</p>
     </div>
-    <div class="contact-card fade-in-up" data-copy="你的QQ号">
+    <div class="contact-card fade-in-up">
       <div class="contact-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2a5 5 0 0 0-5 5v2a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"></path>
-          <path d="M5 14a7 7 0 0 0 14 0"></path>
-          <path d="M12 21v-3"></path>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+          <line x1="9" y1="9" x2="9.01" y2="9"></line>
+          <line x1="15" y1="9" x2="15.01" y2="9"></line>
         </svg>
       </div>
-      <div class="contact-info">
-        <h4>QQ</h4>
-        <div class="contact-value">你的QQ号</div>
-      </div>
-      <span class="contact-copy-hint">点击复制</span>
+      <h4>QQ</h4>
+      <p>1957784559</p>
     </div>
-    <div class="contact-card fade-in-up" data-copy="your@email.com">
+    <div class="contact-card fade-in-up">
       <div class="contact-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
           <polyline points="22,6 12,13 2,6"></polyline>
         </svg>
       </div>
-      <div class="contact-info">
-        <h4>邮箱</h4>
-        <div class="contact-value">your@email.com</div>
-      </div>
-      <span class="contact-copy-hint">点击复制</span>
+      <h4>邮箱</h4>
+      <p>1957784559@qq.com</p>
     </div>
-    <div class="contact-card fade-in-up" data-copy="https://github.com/N1ghtGlow520">
+    <div class="contact-card fade-in-up">
       <div class="contact-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
         </svg>
       </div>
-      <div class="contact-info">
-        <h4>GitHub</h4>
-        <div class="contact-value">N1ghtGlow520</div>
-      </div>
-      <span class="contact-copy-hint">点击复制</span>
+      <h4>地区</h4>
+      <p>浙江·杭州</p>
     </div>
   </div>
 </section>
@@ -1756,7 +1700,7 @@ body.night-mode .meteor-container { opacity: 1; }
             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
           </svg>
         </a>
-        <a href="mailto:your@email.com" class="social-link" title="邮箱">
+        <a href="mailto:1957784559@qq.com" class="social-link" title="邮箱">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
             <polyline points="22,6 12,13 2,6"></polyline>
@@ -1767,15 +1711,6 @@ body.night-mode .meteor-container { opacity: 1; }
   </div>
 </footer>
 <script>
-// ============================================================
-//  ★ 深夜音乐彩蛋配置 —— 请在此处填写网易云音乐链接 ★
-//  支持单曲链接和歌单链接，例如：
-//  单曲：https://music.163.com/#/song?id=123456
-//  歌单：https://music.163.com/#/playlist?id=123456
-//  留空则不启用音乐播放功能
-// ============================================================
-const NETEASE_MUSIC_URL = 'https://music.163.com/#/song?id=208891&uct2=U2FsdGVkX19NrrTgTT0ODXUELEFXUhIFmEWp0XplmjM=';
-
 // ==================== 初始化背景装饰 ====================
 // 生成随机漂浮星点
 function createStars() {
@@ -1793,10 +1728,10 @@ function createStars() {
     container.appendChild(star);
   }
 }
-// 生成流星（已修复：数量减少为4颗，速度放慢至8~12秒，延迟错开更稀疏）
+// 生成流星（已修复：统一从右上向左下划过，位置随机错开）
 function createMeteors() {
   const container = document.getElementById('meteorContainer');
-  const meteorCount = 4;
+  const meteorCount = 8;
   for (let i = 0; i < meteorCount; i++) {
     const meteor = document.createElement('div');
     meteor.className = 'meteor';
@@ -1805,11 +1740,11 @@ function createMeteors() {
     const startY = Math.random() * 50 - 10 + '%';
     meteor.style.setProperty('--x-start', startX);
     meteor.style.setProperty('--y-start', startY);
-    // 随机动画时长：8~12秒（更慢）
-    const duration = Math.random() * 4 + 8;
+    // 随机动画时长：3.5~6.5秒
+    const duration = Math.random() * 3 + 3.5;
     meteor.style.animationDuration = duration + 's';
-    // 随机延迟：0~15秒，错开更稀疏
-    meteor.style.animationDelay = Math.random() * 15 + 's';
+    // 随机延迟：0~10秒，错开出现时间
+    meteor.style.animationDelay = Math.random() * 10 + 's';
     container.appendChild(meteor);
   }
 }
@@ -1843,10 +1778,11 @@ themeBtn.addEventListener('click', () => {
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   updateThemeIcon(isDark);
 });
-// ==================== 深夜模式彩蛋 ====================
+// ==================== 深夜模式 & 音乐彩蛋 ====================
 const navLogo = document.getElementById('navLogo');
 let logoClickCount = 0;
 let logoClickTimer = null;
+let musicUnlocked = false;
 // 深夜模式随机slogan
 const nightSlogans = [
   '夜色温柔，代码不眠，星光与你都在。',
@@ -1862,6 +1798,18 @@ navLogo.addEventListener('click', () => {
   if (logoClickCount >= 2) {
     body.classList.toggle('night-mode');
     logoClickCount = 0;
+    
+    // 解锁音乐播放器
+    if (!musicUnlocked) {
+      const musicPlayer = document.getElementById('musicPlayer');
+      musicPlayer.classList.add('show');
+      musicUnlocked = true;
+      // 提示解锁成功
+      const copyTip = document.getElementById('copyTip');
+      copyTip.textContent = '🎵 音乐播放器已解锁！';
+      copyTip.classList.add('show');
+      setTimeout(() => copyTip.classList.remove('show'), 2000);
+    }
     
     // 切换slogan并重播打字机动画
     const slogan = document.getElementById('sloganText');
@@ -1879,6 +1827,57 @@ navLogo.addEventListener('click', () => {
   logoClickTimer = setTimeout(() => logoClickCount = 0, 1000);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+// 30秒彩蛋提示
+let eggTipShown = false;
+setTimeout(() => {
+  if (!eggTipShown) {
+    const eggTip = document.getElementById('eggTip');
+    eggTip.classList.add('show');
+    setTimeout(() => eggTip.classList.remove('show'), 4000);
+    eggTipShown = true;
+  }
+}, 30000);
+
+// ==================== 项目跳转确认弹窗 ====================
+const linkModal = document.getElementById('linkModal');
+const linkModalDesc = document.getElementById('linkModalDesc');
+const linkModalConfirm = document.getElementById('linkModalConfirm');
+const linkModalCancel = document.getElementById('linkModalCancel');
+let pendingLink = '';
+
+document.querySelectorAll('.project-link[href]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const href = link.getAttribute('href');
+    const projectName = link.closest('.project-card').querySelector('h3').innerText.replace(/^./, '').trim();
+    linkModalDesc.textContent = `即将离开此网站页面，前往「${projectName}」，是否继续？`;
+    pendingLink = href;
+    linkModal.classList.add('show');
+  });
+});
+
+linkModalCancel.addEventListener('click', () => {
+  linkModal.classList.remove('show');
+  pendingLink = '';
+});
+
+linkModalConfirm.addEventListener('click', () => {
+  if (pendingLink) {
+    window.location.href = pendingLink;
+    linkModal.classList.remove('show');
+    pendingLink = '';
+  }
+});
+
+// 点击遮罩关闭弹窗
+linkModal.addEventListener('click', (e) => {
+  if (e.target === linkModal) {
+    linkModal.classList.remove('show');
+    pendingLink = '';
+  }
+});
+
 // ==================== 滚动交互 ====================
 const navbar = document.getElementById('navbar');
 const backTopBtn = document.getElementById('backTopBtn');
@@ -1983,21 +1982,55 @@ sideNavItems.forEach(item => {
     document.querySelector(item.dataset.target).scrollIntoView({ behavior: 'smooth' });
   });
 });
-// ==================== 联系我 - 点击复制 ====================
-document.querySelectorAll('.contact-card').forEach(card => {
-  card.addEventListener('click', () => {
-    const value = card.dataset.copy;
-    if (!value) return;
-    navigator.clipboard.writeText(value).then(() => {
-      const tip = document.getElementById('copyTip');
-      tip.textContent = '已复制：' + value;
-      tip.classList.add('show');
-      setTimeout(() => {
-        tip.classList.remove('show');
-        tip.textContent = '链接已复制到剪贴板';
-      }, 1500);
-    }).catch(() => {});
+// ==================== 本地留言墙 ====================
+const messageForm = document.getElementById('messageForm');
+const messagesList = document.getElementById('messagesList');
+const STORAGE_KEY = 'insomnia_guestbook';
+function loadMessages() {
+  const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  renderMessages(messages);
+}
+function renderMessages(messages) {
+  messagesList.innerHTML = '';
+  if (messages.length === 0) {
+    messagesList.innerHTML = '<div style="text-align:center; color: var(--text-secondary); padding: 40px;">还没有留言，来写下第一条吧～</div>';
+    return;
+  }
+  messages.reverse().forEach(msg => {
+    const item = document.createElement('div');
+    item.className = 'message-item fade-in-up visible';
+    item.innerHTML = `
+      <div class="message-header">
+        <span class="message-name">${escapeHtml(msg.name)}</span>
+        <span class="message-time">${formatTime(msg.time)}</span>
+      </div>
+      <div class="message-content">${escapeHtml(msg.content)}</div>
+    `;
+    messagesList.appendChild(item);
   });
+}
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function formatTime(timestamp) {
+  return new Date(timestamp).toLocaleString('zh-CN', {
+    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+  });
+}
+messageForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = document.getElementById('msgName').value.trim();
+  const content = document.getElementById('msgContent').value.trim();
+  if (!name || !content) return;
+  
+  const messages = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  messages.push({ name, content, time: Date.now() });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  
+  messageForm.reset();
+  loadMessages();
 });
 // ==================== 站点运行天数 ====================
 function updateRunTime() {
@@ -2019,6 +2052,7 @@ const copyBtn = document.getElementById('copyBtn');
 const copyTip = document.getElementById('copyTip');
 copyBtn.addEventListener('click', () => {
   navigator.clipboard.writeText(window.location.href).then(() => {
+    copyTip.textContent = '链接已复制到剪贴板';
     copyTip.classList.add('show');
     setTimeout(() => copyTip.classList.remove('show'), 1500);
   });
@@ -2088,250 +2122,38 @@ function triggerCodeRain() {
     setTimeout(() => container.innerHTML = '', 500);
   }, 5000);
 }
-// ==================== 网易云音乐播放器 ====================
-const musicPlayer = document.getElementById('musicPlayer');
+// ==================== 音乐播放器 ====================
 const musicBtn = document.getElementById('musicBtn');
-const musicInfo = document.getElementById('musicInfo');
-const musicExpandBtn = document.getElementById('musicExpandBtn');
-const musicProgressBar = document.getElementById('musicProgressBar');
-const musicProgressFill = document.getElementById('musicProgressFill');
-const musicCurrentTime = document.getElementById('musicCurrentTime');
-const musicTotalTime = document.getElementById('musicTotalTime');
-const musicVolumeBar = document.getElementById('musicVolumeBar');
-const musicVolumeFill = document.getElementById('musicVolumeFill');
-
-let audio = null;
 let isPlaying = false;
-let playlistSongs = [];
-let currentSongIndex = 0;
-let musicReady = false;
+// 实际使用时替换为本地音频路径，建议使用完整mp3文件解决30秒问题
+const audio = new Audio();
+audio.src = 'Summer Wind - Fire Sheep is Sleeping.mp3'; 
+// audio.loop = true;
 
-// 解析网易云音乐链接
-function parseNeteaseUrl(url) {
-  if (!url) return null;
-  // 匹配 song?id=xxx 或 playlist?id=xxx
-  const songMatch = url.match(/[?&]id=(\d+)/);
-  if (!songMatch) return null;
-  const id = songMatch[1];
-  // 判断类型
-  let type = 'song';
-  if (url.includes('/playlist')) type = 'playlist';
-  else if (url.includes('/song')) type = 'song';
-  else if (url.includes('/album')) type = 'album';
-  return { id, type };
-}
-
-// 格式化时间
-function formatTime(seconds) {
-  if (isNaN(seconds) || seconds < 0) return '0:00';
-  const min = Math.floor(seconds / 60);
-  const sec = Math.floor(seconds % 60);
-  return min + ':' + (sec < 10 ? '0' : '') + sec;
-}
-
-// 初始化音乐
-function initMusic() {
-  const parsed = parseNeteaseUrl(NETEASE_MUSIC_URL);
-  if (!parsed) {
-    musicInfo.textContent = '未配置音乐 · 请在代码中填写网易云链接';
-    musicBtn.style.opacity = '0.5';
-    musicBtn.style.cursor = 'not-allowed';
+musicBtn.addEventListener('click', () => {
+  if (!audio.src) {
+    copyTip.textContent = '请先配置音频文件路径';
+    copyTip.classList.add('show');
+    setTimeout(() => copyTip.classList.remove('show'), 2000);
     return;
   }
-
-  if (parsed.type === 'song') {
-    // 单曲：直接设置音频源
-    setupAudio([parsed.id]);
-  } else if (parsed.type === 'playlist') {
-    // 歌单：尝试获取歌曲列表
-    musicInfo.textContent = '正在加载歌单...';
-    fetchPlaylistSongs(parsed.id);
-  }
-}
-
-// 获取歌单歌曲（尝试通过API，失败则降级为第一首）
-function fetchPlaylistSongs(playlistId) {
-  // 尝试使用网易云API获取歌单详情
-  const apiUrl = `https://music.163.com/api/playlist/detail?id=${playlistId}`;
-  fetch(apiUrl)
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.result && data.result.tracks) {
-        playlistSongs = data.result.tracks.map(t => ({
-          id: t.id,
-          name: t.name,
-          artist: (t.artists || []).map(a => a.name).join(' / ')
-        }));
-        if (playlistSongs.length > 0) {
-          setupAudio(playlistSongs.map(s => s.id));
-        } else {
-          setupAudio([playlistId]);
-        }
-      } else {
-        setupAudio([playlistId]);
-      }
-    })
-    .catch(() => {
-      // CORS或网络失败，降级为直接播放（用歌单ID不一定能播，提示用户）
-      musicInfo.textContent = '歌单加载失败，请使用单曲链接';
-      musicBtn.style.opacity = '0.5';
-    });
-}
-
-// 设置音频
-function setupAudio(songIds) {
-  if (songIds.length === 0) return;
-  playlistSongs = songIds.map((id, i) => ({
-    id: id,
-    name: playlistSongs[i]?.name || '网易云音乐',
-    artist: playlistSongs[i]?.artist || ''
-  }));
-  currentSongIndex = 0;
-  loadCurrentSong();
-  musicReady = true;
-}
-
-// 加载当前歌曲
-function loadCurrentSong() {
-  if (playlistSongs.length === 0) return;
-  const song = playlistSongs[currentSongIndex];
-  const audioUrl = `https://music.163.com/song/media/outer/url?id=${song.id}.mp3`;
   
-  if (!audio) {
-    audio = new Audio();
-    // 注意：不设置 crossOrigin，网易云音频服务器不支持 CORS，设置后会导致加载失败
-    audio.volume = 0.7;
-    audio.preload = 'metadata';
-    
-    audio.addEventListener('loadedmetadata', () => {
-      musicTotalTime.textContent = formatTime(audio.duration);
-    });
-    
-    audio.addEventListener('timeupdate', () => {
-      if (audio.duration) {
-        const percent = (audio.currentTime / audio.duration) * 100;
-        musicProgressFill.style.width = percent + '%';
-        musicCurrentTime.textContent = formatTime(audio.currentTime);
-      }
-    });
-    
-    audio.addEventListener('ended', () => {
-      // 播放下一首
-      if (playlistSongs.length > 1) {
-        currentSongIndex = (currentSongIndex + 1) % playlistSongs.length;
-        loadCurrentSong();
-        audio.play().catch(() => {});
-      } else {
-        // 单曲循环
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-      }
-    });
-    
-    audio.addEventListener('error', (e) => {
-      console.warn('音频加载失败，尝试备用方案...', e);
-      // 第一次失败：尝试不带 .mp3 后缀的备用链接
-      if (!audio._retried) {
-        audio._retried = true;
-        const song = playlistSongs[currentSongIndex];
-        audio.src = `https://music.163.com/song/media/outer/url?id=${song.id}`;
-        audio.load();
-        return;
-      }
-      // 第二次失败：显示官方 iframe 播放器作为兜底
-      musicInfo.textContent = '直连播放失败，已切换官方播放器';
-      showIframeFallback();
-      isPlaying = false;
-      updatePlayIcon();
-    });
-  }
-  
-  audio.src = audioUrl;
-  // 重置重试标志和iframe兜底
-  if (audio) audio._retried = false;
-  const iframeWrap = document.getElementById('musicIframeWrap');
-  if (iframeWrap) iframeWrap.style.display = 'none';
-  const displayName = song.name + (song.artist ? ' - ' + song.artist : '');
-  musicInfo.textContent = displayName;
-  musicInfo.title = displayName;
-}
-
-// 官方iframe兜底播放器（直连播放失败时调用）
-function showIframeFallback() {
-  const song = playlistSongs[currentSongIndex];
-  if (!song) return;
-  const iframeWrap = document.getElementById('musicIframeWrap');
-  const iframe = document.getElementById('musicIframe');
-  // type=2 为单曲播放器，auto=1 自动播放
-  iframe.src = `https://music.163.com/outchain/player?type=2&id=${song.id}&auto=1&height=66`;
-  iframeWrap.style.display = 'block';
-  // 自动展开播放器以便看到iframe
-  if (!musicPlayer.classList.contains('expanded')) {
-    musicPlayer.classList.add('expanded');
-    const icon = musicExpandBtn.querySelector('svg');
-    icon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
-  }
-}
-
-// 更新播放/暂停图标
-function updatePlayIcon() {
+  isPlaying = !isPlaying;
   const icon = musicBtn.querySelector('svg');
   icon.innerHTML = isPlaying
     ? '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>'
     : '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
-}
-
-// 播放/暂停
-musicBtn.addEventListener('click', () => {
-  if (!musicReady || !audio) return;
-  isPlaying = !isPlaying;
-  updatePlayIcon();
-  if (isPlaying) {
-    audio.play().catch(err => {
-      console.error('播放失败:', err);
-      musicInfo.textContent = '播放失败，请检查网络或链接';
-      isPlaying = false;
-      updatePlayIcon();
-    });
-  } else {
-    audio.pause();
-  }
+  
+  isPlaying ? audio.play().catch(() => {
+    isPlaying = false;
+    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+  }) : audio.pause();
 });
-
-// 展开/收起播放器
-musicExpandBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  musicPlayer.classList.toggle('expanded');
-  const icon = musicExpandBtn.querySelector('svg');
-  if (musicPlayer.classList.contains('expanded')) {
-    icon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
-  } else {
-    icon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
-  }
-});
-
-// 进度条点击跳转
-musicProgressBar.addEventListener('click', (e) => {
-  if (!audio || !audio.duration) return;
-  const rect = musicProgressBar.getBoundingClientRect();
-  const percent = (e.clientX - rect.left) / rect.width;
-  audio.currentTime = percent * audio.duration;
-});
-
-// 音量条点击
-musicVolumeBar.addEventListener('click', (e) => {
-  if (!audio) return;
-  const rect = musicVolumeBar.getBoundingClientRect();
-  const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  audio.volume = percent;
-  musicVolumeFill.style.width = (percent * 100) + '%';
-});
-
 // ==================== 页面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
   createStars();
   createMeteors();
-  initMusic();
+  loadMessages();
   updateRunTime();
   setInterval(updateRunTime, 60000); // 每分钟更新天数
 });
